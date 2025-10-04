@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Stepper from '@/components/ui/stepper';
 import Image from 'next/image';
 import { useWallet } from '@/hooks/useWallet';
-import { storeApi, uploadApi, ApiError } from '@/lib/api';
+import { storeApi, uploadApi, healthApi, ApiError } from '@/lib/api';
 import { validation, formatFileSize } from '@/lib/validation';
 import { WalletConnectButton } from '@/components/wallet/wallet-connect-button';
 
@@ -46,11 +46,20 @@ export default function Onboard() {
   // Check backend availability on mount
   useEffect(() => {
     const checkBackend = async () => {
-      const available = true;
-      setBackendAvailable(available);
+      try {
+        const response = await fetch(`${process.env.NODE_ENV === 'production' 
+          ? process.env.NEXT_PUBLIC_API_URL_PRODUCTION
+          : process.env.NEXT_PUBLIC_API_URL}/health`);
+        setBackendAvailable(response.ok);
+      } catch (error) {
+        console.error('Backend health check failed:', error);
+        setBackendAvailable(false);
+      }
     };
+    
     checkBackend();
   }, []);
+
 
   // Check slug availability with debounce
   useEffect(() => {
@@ -163,19 +172,7 @@ export default function Onboard() {
               alt='SolStore_Logo' />
           </div>
 
-          <div className="flex items-center gap-4">
-            {backendAvailable === false && (
-              <div className="text-xs text-red-600">
-                Backend: Offline
-              </div>
-            )}
-            {backendAvailable === true && (
-              <div className="text-xs text-green-600">
-                Backend: Online
-              </div>
-            )}
-            <Info />
-          </div>
+        
         </div>
       </header>
 
@@ -186,18 +183,7 @@ export default function Onboard() {
           <Stepper steps={steps} currentStep={currentStep} />
         </div>
 
-        {/* Backend Status */}
-        {backendAvailable === false && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <div className="flex items-center gap-2 text-red-800">
-              <AlertCircle className="w-5 h-5" />
-              <div>
-                <p className="text-sm font-medium">Backend server not available</p>
-                <p className="text-xs">Please start your backend server to continue with store creation</p>
-              </div>
-            </div>
-          </div>
-        )}
+     
 
         {/* Error Display */}
         {error && (
@@ -502,17 +488,7 @@ export default function Onboard() {
           )}
         </div>
 
-        {/* Backend Required Message */}
-        {currentStep > 0 && backendAvailable === false && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mt-6">
-            <div className="flex items-center gap-2 text-amber-800">
-              <AlertCircle className="w-5 h-5" />
-              <p className="text-sm">
-                <span className="font-medium">Backend server required:</span> Please start your backend server to continue with store creation.
-              </p>
-            </div>
-          </div>
-        )}
+     
 
         {/* Navigation Buttons */}
         {currentStep < 4 && (
@@ -536,7 +512,7 @@ export default function Onboard() {
                 ? 'bg-indigo-600 text-white hover:bg-indigo-700'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
-              title={currentStep > 0 && backendAvailable === false ? 'Backend server required' : ''}
+           
             >
               {isLoading ? (
                 <>

@@ -5,7 +5,29 @@ import axios, {
   AxiosResponse,
   AxiosError,
 } from "axios";
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL_PRODUCTION;
+
+// Determine API URL based on environment with fallbacks
+const getApiBaseUrl = () => {
+  // Check if we're in production
+  if (process.env.NODE_ENV === 'production') {
+    // Use production URL if available, otherwise fallback
+    return process.env.NEXT_PUBLIC_API_URL_PRODUCTION || 'https://web-store-api-3.onrender.com/v1';
+  }
+  
+  // Development environment
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/v1';
+};
+
+const FINAL_API_BASE_URL = getApiBaseUrl();
+
+// Debug logging for API URL configuration
+console.log('API Configuration Debug:', {
+  NODE_ENV: process.env.NODE_ENV,
+  NEXT_PUBLIC_API_URL_PRODUCTION: process.env.NEXT_PUBLIC_API_URL_PRODUCTION,
+  NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+  FINAL_API_BASE_URL: FINAL_API_BASE_URL,
+  isProduction: process.env.NODE_ENV === 'production'
+});
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
@@ -26,12 +48,22 @@ export class ApiError extends Error {
 
 // Create axios instance with base configuration
 const apiClient: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: FINAL_API_BASE_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
 });
+
+// Log API configuration for debugging
+if (typeof window !== 'undefined') {
+  console.log('API Configuration:', {
+    environment: process.env.NODE_ENV,
+    baseURL:  FINAL_API_BASE_URL,
+    production: process.env.NEXT_PUBLIC_API_URL_PRODUCTION,
+    development: process.env.NEXT_PUBLIC_API_URL
+  });
+}
 
 // Request interceptor - adds auth token to requests
 apiClient.interceptors.request.use(
@@ -161,6 +193,23 @@ async function apiRequest<T>(
     throw new ApiError("UNKNOWN_ERROR", "An unexpected error occurred");
   }
 }
+
+// Health check API function
+export const healthApi = {
+  async checkHealth() {
+    try {
+      const response = await apiClient.get('/health');
+      return { available: true, data: response.data };
+    } catch (error) {
+      console.error('API Health Check Failed:', error);
+      return { 
+        available: false, 
+        error: error instanceof ApiError ? error.message : 'Unknown error',
+        details: error
+      };
+    }
+  }
+};
 
 // Auth API functions
 export const authApi = {

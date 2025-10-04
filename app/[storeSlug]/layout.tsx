@@ -11,7 +11,9 @@ interface StoreLayoutProps {
 // Server-side store validation
 async function validateStore(storeSlug: string) {
   try {
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL_PRODUCTION ;
+    const API_BASE_URL = process.env.NODE_ENV === 'production' 
+      ? process.env.NEXT_PUBLIC_API_URL_PRODUCTION
+      : process.env.NEXT_PUBLIC_API_URL;
     
     const response = await fetch(`${API_BASE_URL}/stores/${storeSlug}`, {
       method: 'GET',
