@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Stepper from '@/components/ui/stepper';
 import Image from 'next/image';
 import { useWallet } from '@/hooks/useWallet';
-import { storeApi, uploadApi, ApiError, checkBackendHealth } from '@/lib/api';
+import { storeApi, uploadApi, ApiError } from '@/lib/api';
 import { validation, formatFileSize } from '@/lib/validation';
 import { WalletConnectButton } from '@/components/wallet/wallet-connect-button';
 

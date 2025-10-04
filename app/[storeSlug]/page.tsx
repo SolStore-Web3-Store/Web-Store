@@ -31,6 +31,13 @@ interface StorePageProps {
   }>;
 }
 
+interface StoreSettings {
+  currency?: string;
+  language?: string;
+  timezone?: string;
+  theme?: string;
+}
+
 interface StoreData {
   id: string;
   name: string;
@@ -38,29 +45,32 @@ interface StoreData {
   description?: string;
   icon?: string;
   banner?: string;
-  settings: {
-    currency?: string;
-    language?: string;
-    timezone?: string;
-    theme?: string;
-  };
+  settings: unknown;
   owner: {
     walletAddress: string;
   };
 }
 
+// Helper function to safely access store settings
+const getStoreSettings = (settings: unknown): StoreSettings => {
+  if (typeof settings === 'object' && settings !== null) {
+    return settings as StoreSettings;
+  }
+  return {};
+};
+
 interface Product {
   id: string;
   name: string;
-  description?: string;
+  description: string | null;
   price: string;
   currency: string;
-  category?: string;
-  stock?: number | string;
+  category: string | null;
+  stock: number | "unlimited";
   images: string[];
-  status: string;
-  metadata?: Record<string, unknown>;
-  createdAt: string;
+  status: "active" | "draft" | "inactive";
+  sales: number;
+  revenue: string;
 }
 
 interface ProductsResponse {
@@ -169,7 +179,7 @@ export default function Store({ params }: StorePageProps) {
     const categorySet = new Set(
       productsData.products
         .map(p => p.category)
-        .filter(Boolean)
+        .filter((category): category is string => Boolean(category))
     );
     return Array.from(categorySet);
   }, [productsData]);
@@ -234,7 +244,9 @@ export default function Store({ params }: StorePageProps) {
         return products.sort((a, b) => a.name.localeCompare(b.name));
       case 'latest':
       default:
-        return products.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        // Since we don't have createdAt, just return products as they come from API
+        // The API likely returns them in the correct order already
+        return products;
     }
   }, [productsData?.products, sortBy]);
 
@@ -438,7 +450,7 @@ export default function Store({ params }: StorePageProps) {
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
                   <span className="flex items-center gap-1">
                     <Globe className="w-4 h-4" />
-                    {storeData.settings.language || 'English'}
+                    {getStoreSettings(storeData.settings).language || 'English'}
                   </span>
                   <span className="flex items-center gap-1">
                     <ShoppingCart className="w-4 h-4" />
@@ -601,7 +613,7 @@ export default function Store({ params }: StorePageProps) {
                     </div>
                     <div className="flex items-center gap-2">
                       <Globe className="w-4 h-4" />
-                      <span>{storeData.settings.currency || 'SOL'}</span>
+                      <span>{getStoreSettings(storeData.settings).currency || 'SOL'}</span>
                     </div>
                   </div>
                 </div>

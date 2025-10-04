@@ -48,7 +48,7 @@ interface Tab {
 
 function StoreSettingsContent() {
   const searchParams = useSearchParams();
-  const currentStore = searchParams.get('store');
+  const currentStore = searchParams.get('store') || undefined;
   const [activeTab, setActiveTab] = useState<string>('general');
   const [settings, setSettings] = useState<StoreSettings>({
     storeName: '',

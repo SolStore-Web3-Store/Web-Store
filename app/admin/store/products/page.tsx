@@ -145,7 +145,7 @@ function ProductsContent() {
     const categorySet = new Set(
       products.products
         .map(p => p.category)
-        .filter(Boolean)
+        .filter((category): category is string => Boolean(category))
     );
     return Array.from(categorySet);
   }, [products]);

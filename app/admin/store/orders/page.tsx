@@ -99,7 +99,10 @@ function OrdersContent() {
 
         // Get store data first
         const store = await storeApi.getStoreBySlug(currentStore);
-        setStoreData(store);
+        setStoreData({
+          ...store,
+          settings: store.settings as Record<string, unknown> || {}
+        });
 
         // Get orders
         const ordersData = await storeApi.getStoreOrders(store.id, {
@@ -305,11 +308,12 @@ function OrdersContent() {
                             </div>
                           </td>
                           <td className="py-4 px-6">
-                            <div className="relative">
+                            <div className="flex items-center gap-2">
+                              <StatusIcon className="w-4 h-4" />
                               <select
                                 value={order.status}
                                 onChange={(e) => handleStatusUpdate(order.id, e.target.value)}
-                                className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium border-0 cursor-pointer ${statusConfig[order.status as keyof typeof statusConfig]?.bg || 'bg-gray-100'} ${statusConfig[order.status as keyof typeof statusConfig]?.color || 'text-gray-600'}`}
+                                className={`px-3 py-1 rounded-full text-sm font-medium border-0 cursor-pointer ${statusConfig[order.status as keyof typeof statusConfig]?.bg || 'bg-gray-100'} ${statusConfig[order.status as keyof typeof statusConfig]?.color || 'text-gray-600'}`}
                               >
                                 <option value="pending">Pending</option>
                                 <option value="processing">Processing</option>

@@ -1,6 +1,6 @@
 "use client";
 import React, { Suspense, useState, useEffect } from 'react';
-import { redirect, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Sidebar from '@/components/ui/sidebar';
 import {
   TrendingUp,
@@ -10,7 +10,6 @@ import {
   ShoppingCart,
   Users,
   Eye,
-  MoreHorizontal,
   AlertCircle,
   ExternalLink
 } from 'lucide-react';
@@ -97,7 +96,10 @@ function StoreDashboardContent() {
 
         // Get store data first to get the store ID
         const store = await storeApi.getStoreBySlug(currentStore);
-        setStoreData(store);
+        setStoreData({
+          ...store,
+          settings: store.settings as Record<string, unknown> || {}
+        });
 
         // Get analytics data
         const analyticsData = await storeApi.getStoreAnalytics(store.id);
