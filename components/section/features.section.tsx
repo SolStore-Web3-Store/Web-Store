@@ -57,7 +57,7 @@ export default function Features() {
             <div className="mb-12 flex gap-4">
               {/* Solana Icon */}
               <Image
-                src="https://sdmntprukwest.oaiusercontent.com/files/00000000-2e6c-6243-b74c-bf3184f0f1e4/raw?se=2025-10-03T18%3A12%3A55Z&sp=r&sv=2024-08-04&sr=b&scid=e6d2e9e6-943d-5cb3-b473-265773c045ad&skoid=eb780365-537d-4279-a878-cae64e33aa9c&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-10-03T00%3A42%3A53Z&ske=2025-10-04T00%3A42%3A53Z&sks=b&skv=2024-08-04&sig=VK7dySRaYKAsgLugrNkFQDvUIsGjNT3PiBWrlOpTIVI%3D"
+                src="/solana.png"
                 alt="Solana Logo"
                 width={300}
                 height={300}

@@ -49,7 +49,7 @@ export default function Onboard() {
       <header className="bg-white border-b border-gray-700">
         <div className="flex w-full items-center justify-between max-w-7xl mx-auto  text-black px-4 py-4">
           <div className="flex items-center gap-2">
-             <Image src={'https://sdmntprwestus3.oaiusercontent.com/files/00000000-8eec-61fd-97a8-d6529f12ef68/raw?se=2025-10-03T20%3A21%3A49Z&sp=r&sv=2024-08-04&sr=b&scid=5abd501d-d5a1-55af-812d-9deae88510ca&skoid=f71d6506-3cac-498e-b62a-67f9228033a9&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-10-03T07%3A56%3A09Z&ske=2025-10-04T07%3A56%3A09Z&sks=b&skv=2024-08-04&sig=7XUcqGOMdXdVLEtPcv08me0nOjs0kfv4h/WNX6ivMRU%3D'}
+             <Image src={'/solStore_icon.png'}
                      height={80}
                      width={80}
                      alt='SolStore_Logo'/>

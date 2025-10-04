@@ -128,15 +128,15 @@ export default function Store(storeName: StoreType) {
           <div className="flex items-center justify-between px-4 py-3">
             <button
               onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden p-2 hover:bg-gray-100 rounded-md"
+              className="lg:hidden p-2 hover:bg-gray-100 rounded-md text-black"
             >
               <Menu className="w-5 h-5" />
             </button>
             <div className="flex-1" />
-            <button className="p-2 hover:bg-gray-100 rounded-md">
+            <button className="p-2 hover:bg-gray-100 rounded-md text-black">
               <Search className="w-5 h-5" />
             </button>
-            <button className="p-2 hover:bg-gray-100 rounded-md">
+            <button className="p-2 hover:bg-gray-100 rounded-md text-black">
               <ShoppingCart className="w-5 h-5" />
             </button>
           </div>
@@ -171,7 +171,7 @@ export default function Store(storeName: StoreType) {
         </section>
 
         {/* Search and Filter Section */}
-        <section className="bg-gray-50 py-6 px-4">
+        <section className="bg-gray-50 py-6 px-4 border-y border-gray-400/20">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col lg:flex-row gap-4 mb-6">
               {/* Search Bar */}
@@ -181,7 +181,8 @@ export default function Store(storeName: StoreType) {
                   <input
                     type="text"
                     placeholder="Search"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent text-black"
                   />
                 </div>
               </div>
@@ -191,7 +192,7 @@ export default function Store(storeName: StoreType) {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent appearance-none bg-white cursor-pointer"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent appearance-none bg-white cursor-pointer text-black"
                 >
                   <option>Latest</option>
                   <option>Price: Low to High</option>
@@ -266,13 +267,13 @@ export default function Store(storeName: StoreType) {
         </section>
 
         {/* Footer */}
-        <footer className="bg-white border-t border-gray-200 py-6 px-4">
+        <footer className="bg-white border-t border-gray-200 py-6 px-4 text-black">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm">
+              <a href='https://web-store-mauve.vercel.app/' target='_blank' className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm">
                 <ShoppingCart className="w-4 h-4" />
-                <span>Create your Take App</span>
-              </button>
+                <span>Create your SolStore now</span>
+              </a>
               <p className="text-xs text-gray-500">© 2025 {storeSlug}</p>
             </div>
           </div>

@@ -22,7 +22,7 @@ export default function WebPlatform() {
         <div className=" w-full mx-auto px-16 py-4 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2">
-           <Image src={'https://sdmntprwestus3.oaiusercontent.com/files/00000000-8eec-61fd-97a8-d6529f12ef68/raw?se=2025-10-03T20%3A21%3A49Z&sp=r&sv=2024-08-04&sr=b&scid=5abd501d-d5a1-55af-812d-9deae88510ca&skoid=f71d6506-3cac-498e-b62a-67f9228033a9&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-10-03T07%3A56%3A09Z&ske=2025-10-04T07%3A56%3A09Z&sks=b&skv=2024-08-04&sig=7XUcqGOMdXdVLEtPcv08me0nOjs0kfv4h/WNX6ivMRU%3D'}
+           <Image src={'/solStore_icon.png'}
            height={80}
            width={80}
            alt='SolStore_Logo'/>
@@ -90,29 +90,27 @@ export default function WebPlatform() {
             </div>
           </div>
 
-          <div className="h-full flex items-center justify-center p-8">
-  <div className="relative w-full max-w-4xl h-full">
-    {/* First Box - Behind (Black card) - offset to the LEFT */}
-    <div className="absolute top-8 right-8 bg-black rounded-lg h-full w-full max-w-3xl flex items-center justify-center z-10">
-     
+          <div className="h-full flex items-center justify-center p-8 ">
+  <div className="relative w-full max-w-7xl h-full scale-110  ">
+    {/* First Box - Behind (Black card) */}
+    <div className="absolute top-8 right-8 bg-black rounded-lg h-full w-full flex items-center justify-center z-10">
     </div>
     
     {/* Second Box - On Top (Image card) */}
-    <div className="absolute top-0 right-0  overflow-hidden z-20 w-full  h-full">
+    <div className="absolute top-0 right-0 overflow-hidden z-20 w-full h-full">
       <Image
         src={'/solstoreDash.jpg'}
-       fill
-        alt='SolStore_Dashboard'
-        className='w-full h-full border border-gray-700 rounded-lg'
+        width={1600} // doubled
+        height={1200} // doubled
+        alt="SolStore_Dashboard"
+        className="w-full h-full border border-gray-700 rounded-lg"
       />
     </div>
   </div>
 </div>
-    
-          <div className="relative w-full   rounded-lg overflow-hidden">
-            <div className=' left-0 bg-black w-full h-full z-0'/>
 
-</div>
+    
+      
 
 
         </div>
