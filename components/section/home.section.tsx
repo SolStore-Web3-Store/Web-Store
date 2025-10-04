@@ -1,10 +1,28 @@
 "use client"
 import React from 'react';
-import { Flame } from 'lucide-react';
+import { Flame, User, LogOut, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useWallet } from '@/hooks/useWallet';
+import { WalletService } from '@/lib/wallet';
 
 export default function WebPlatform() {
+  const { isConnected, walletAddress, connectWallet, disconnectWallet, isConnecting } = useWallet();
+  const walletService = WalletService.getInstance();
+  const authToken = typeof window !== 'undefined' ? walletService.getAuthToken() : null;
+
+  const formatWalletAddress = (address: string) => {
+    return `${address.slice(0, 4)}...${address.slice(-4)}`;
+  };
+
+  const handleWalletAction = async () => {
+    if (isConnected) {
+      await disconnectWallet();
+    } else {
+      await connectWallet();
+    }
+  };
+
   return (
     <div className="h-full w-full bg-gray-50" suppressHydrationWarning>
       {/* Top Banner */}
@@ -48,10 +66,66 @@ export default function WebPlatform() {
             </a>
           </nav>
 
-          {/* CTA Button */}
-          <Link href='/onboard' className="bg-black text-white px-6 py-2.5 rounded-lg font-medium hover:bg-gray-800 transition-colors">
-            Get Started
-          </Link>
+          {/* Wallet & CTA Section */}
+          <div className="flex items-center gap-4">
+            {isConnected && walletAddress ? (
+              <div className="flex items-center gap-3">
+                {/* Wallet Address Display */}
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 rounded-lg">
+                  <User className="w-4 h-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700">
+                    {formatWalletAddress(walletAddress)}
+                  </span>
+                </div>
+                
+                {/* Dashboard Button - Show if authenticated */}
+                {authToken && (
+                  <Link 
+                    href="/admin" 
+                    target='_blank'
+                    className="flex gap-1 bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+                  >
+                    <ArrowRight/>
+                    Dashboard
+                  </Link>
+                )}
+                
+                {/* Disconnect Button */}
+                <button
+                  onClick={handleWalletAction}
+                  className="flex items-center gap-2 px-3 py-2.5 text-gray-600 hover:text-gray-800 transition-colors"
+                  title="Disconnect Wallet"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                {/* Connect Wallet Button */}
+                <button
+                  onClick={handleWalletAction}
+                  disabled={isConnecting}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50"
+                >
+                  {isConnecting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                      Connecting...
+                    </>
+                  ) : (
+                    <>
+                      <User className="w-4 h-4" />
+                      Connect Wallet
+                    </>
+                  )}
+                </button>
+                
+                {/* Get Started Button */}
+                <Link href='/onboard' className="bg-black text-white px-6 py-2.5 rounded-lg font-medium hover:bg-gray-800 transition-colors">
+                  Get Started
+                </Link>
+              </div>
+            )}</div>
         </div>
       </header>
 
@@ -70,9 +144,21 @@ export default function WebPlatform() {
 
             {/* CTA Buttons */}
             <div className="flex items-center gap-4">
-              <button className="bg-indigo-600 text-white px-8 py-3.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm">
-                Get Started
-              </button>
+              {isConnected && authToken ? (
+                <Link 
+                  href="/admin" 
+                  className="bg-indigo-600 text-white px-8 py-3.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm"
+                >
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <Link 
+                  href="/onboard" 
+                  className="bg-indigo-600 text-white px-8 py-3.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors shadow-sm"
+                >
+                  Get Started
+                </Link>
+              )}
               <button className="bg-white text-gray-900 px-8 py-3.5 rounded-lg font-medium hover:bg-gray-50 transition-colors border border-gray-300">
                 Explore
               </button>

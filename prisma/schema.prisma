@@ -1,0 +1,131 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(cuid())
+  walletAddress String   @unique @map("wallet_address") @db.VarChar(44)
+  email         String?  @db.VarChar(255)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  stores Store[]
+
+  @@map("users")
+}
+
+model Store {
+  id          String    @id @default(cuid())
+  ownerId     String    @map("owner_id")
+  name        String    @db.VarChar(255)
+  slug        String    @unique @db.VarChar(100)
+  description String?   @db.Text
+  iconUrl     String?   @map("icon_url") @db.VarChar(500)
+  bannerUrl   String?   @map("banner_url") @db.VarChar(500)
+  settings    Json      @default("{}")
+  status      StoreStatus @default(ACTIVE)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  owner    User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  products Product[]
+  orders   Order[]
+
+  @@map("stores")
+}
+
+model Product {
+  id          String        @id @default(cuid())
+  storeId     String        @map("store_id")
+  name        String        @db.VarChar(255)
+  description String?       @db.Text
+  price       Decimal       @db.Decimal(10, 4)
+  currency    String        @default("SOL") @db.VarChar(10)
+  category    String?       @db.VarChar(100)
+  stock       Int?          // NULL for unlimited stock
+  images      Json          @default("[]")
+  metadata    Json          @default("{}")
+  status      ProductStatus @default(ACTIVE)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  store      Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@map("products")
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  storeId         String      @map("store_id")
+  orderNumber     String      @unique @map("order_number") @db.VarChar(20)
+  customerWallet  String      @map("customer_wallet") @db.VarChar(44)
+  customerEmail   String?     @map("customer_email") @db.VarChar(255)
+  totalAmount     Decimal     @map("total_amount") @db.Decimal(10, 4)
+  currency        String      @default("SOL") @db.VarChar(10)
+  status          OrderStatus @default(PENDING)
+  paymentTxHash   String?     @map("payment_tx_hash") @db.VarChar(88)
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  // Relations
+  store      Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String   @map("order_id")
+  productId String   @map("product_id")
+  quantity  Int      @default(1)
+  price     Decimal  @db.Decimal(10, 4)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("order_items")
+}
+
+// Enums
+enum StoreStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+
+  @@map("store_status")
+}
+
+enum ProductStatus {
+  ACTIVE
+  DRAFT
+  INACTIVE
+  OUT_OF_STOCK
+
+  @@map("product_status")
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+  REFUNDED
+
+  @@map("order_status")
+}

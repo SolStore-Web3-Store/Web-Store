@@ -48,6 +48,7 @@ interface Tab {
 
 function StoreSettingsContent() {
   const searchParams = useSearchParams();
+  const currentStore = searchParams.get('store');
   const [activeTab, setActiveTab] = useState<string>('general');
   const [settings, setSettings] = useState<StoreSettings>({
     storeName: '',
@@ -108,7 +109,7 @@ function StoreSettingsContent() {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      <Sidebar />
+      <Sidebar currentStore={currentStore} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
@@ -287,10 +288,8 @@ function StoreSettingsContent() {
                           onChange={(e) => handleInputChange('currency', e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
-                          <option value="NGN">Nigerian Naira (₦)</option>
-                          <option value="USD">US Dollar ($)</option>
-                          <option value="EUR">Euro (€)</option>
-                          <option value="GBP">British Pound (£)</option>
+                          <option value="SOL">Solana (SOL)</option>
+                          <option value="USDC">USD Coin (USDC)</option>
                         </select>
                       </div>
 
