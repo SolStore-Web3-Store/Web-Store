@@ -663,7 +663,172 @@ Authorization: Bearer <jwt_token>
 }
 ```
 
-### 6. Analytics & Dashboard
+### 6. Checkout & Payments (Solana Pay)
+
+#### Create Checkout Session
+
+```http
+POST /v1/stores/{storeId}/checkout
+```
+
+**Request Body:**
+
+```json
+{
+  "productId": "string (uuid)",
+  "quantity": "number (default: 1, min: 1)",
+  "customerWallet": "string (32-44 chars, Solana wallet address)",
+  "customerEmail": "string (optional, valid email)",
+  "currency": "SOL|USDC (default: SOL)"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "orderId": "uuid",
+    "orderNumber": "#ORD-1234567890",
+    "paymentURL": "solana:9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM?amount=2.5&reference=...",
+    "qrCode": "solana:9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM?amount=2.5&reference=...",
+    "amount": "2.5",
+    "currency": "SOL",
+    "reference": "reference-public-key-string",
+    "expiresAt": "2024-01-01T00:05:00Z",
+    "product": {
+      "id": "uuid",
+      "name": "Digital Art Collection #1",
+      "price": "2.5"
+    },
+    "store": {
+      "id": "uuid",
+      "name": "CryptoArt Gallery"
+    }
+  }
+}
+```
+
+**Error Responses:**
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_WALLET",
+    "message": "Invalid customer wallet address"
+  }
+}
+```
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "PRODUCT_OUT_OF_STOCK",
+    "message": "Insufficient stock available"
+  }
+}
+```
+
+#### Verify Payment
+
+```http
+POST /v1/stores/{storeId}/checkout/verify
+```
+
+**Request Body:**
+
+```json
+{
+  "orderId": "string (uuid)",
+  "signature": "string (optional, transaction signature)"
+}
+```
+
+**Response (Payment Confirmed):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "orderId": "uuid",
+    "orderNumber": "#ORD-1234567890",
+    "status": "completed",
+    "paymentConfirmed": true,
+    "transactionSignature": "5KJp7z8abc123def456...",
+    "paidAmount": "2.5",
+    "paidAt": "2024-01-01T00:03:45Z"
+  }
+}
+```
+
+**Response (Payment Pending):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "orderId": "uuid",
+    "orderNumber": "#ORD-1234567890",
+    "status": "pending",
+    "paymentConfirmed": false,
+    "message": "Payment not yet confirmed"
+  }
+}
+```
+
+**Error Responses:**
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "ORDER_EXPIRED",
+    "message": "Order has expired"
+  }
+}
+```
+
+#### Get Checkout Status
+
+```http
+GET /v1/stores/{storeId}/checkout/{orderId}/status
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "orderId": "uuid",
+    "orderNumber": "#ORD-1234567890",
+    "status": "pending|completed|failed",
+    "amount": "2.5",
+    "currency": "SOL",
+    "paymentURL": "solana:9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM?amount=2.5&reference=...",
+    "expiresAt": "2024-01-01T00:05:00Z",
+    "transactionSignature": "5KJp7z8abc123def456..." | null,
+    "items": [
+      {
+        "product": {
+          "id": "uuid",
+          "name": "Digital Art Collection #1",
+          "price": "2.5"
+        },
+        "quantity": 1,
+        "price": "2.5"
+      }
+    ],
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:03:45Z"
+  }
+}
+```
+
+### 7. Analytics & Dashboard
 
 #### Get Store Analytics
 
@@ -762,6 +927,9 @@ All API endpoints return errors in the following format:
 - `INSUFFICIENT_FUNDS`: Not enough SOL for transaction
 - `STORE_SLUG_TAKEN`: Store slug already exists
 - `PRODUCT_OUT_OF_STOCK`: Product not available
+- `INVALID_WALLET`: Invalid Solana wallet address
+- `ORDER_EXPIRED`: Checkout session has expired
+- `INVALID_ORDER`: Order missing required data
 
 ## Status Codes
 
@@ -782,6 +950,7 @@ All API endpoints return errors in the following format:
 - **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: JWT tokens
 - **File Storage**: UploadThing (CDN + Storage)
+- **Payments**: Solana Pay integration with SOL and USDC support
 - **Rate Limiting**: Express rate limiter (100 requests per 15 minutes)
 - **Security**: Helmet.js, CORS enabled
 
@@ -797,6 +966,10 @@ JWT_EXPIRES_IN="7d"
 
 # UploadThing
 UPLOADTHING_TOKEN="your-uploadthing-token"
+
+# Solana Configuration
+SOLANA_RPC_URL="https://api.mainnet-beta.solana.com"
+STORE_WALLET_ADDRESS="your-store-wallet-public-key"
 
 # Server
 PORT=4000
@@ -865,6 +1038,30 @@ curl -X POST http://localhost:4000/v1/stores \
     "storeSlug": "my-store",
     "storeIcon": "https://utfs.io/f/uploaded-icon-key",
     "description": "My awesome store"
+  }'
+```
+
+4. **Create Checkout Session**
+
+```bash
+curl -X POST http://localhost:4000/v1/stores/STORE_ID/checkout \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productId": "PRODUCT_ID",
+    "quantity": 1,
+    "customerWallet": "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM",
+    "customerEmail": "customer@example.com",
+    "currency": "SOL"
+  }'
+```
+
+5. **Verify Payment**
+
+```bash
+curl -X POST http://localhost:4000/v1/stores/STORE_ID/checkout/verify \
+  -H "Content-Type: application/json" \
+  -d '{
+    "orderId": "ORDER_ID_FROM_CHECKOUT"
   }'
 ```
 

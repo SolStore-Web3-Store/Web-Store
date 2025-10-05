@@ -9,24 +9,27 @@ import axios, {
 // Determine API URL based on environment with fallbacks
 const getApiBaseUrl = () => {
   // Check if we're in production
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     // Use production URL if available, otherwise fallback
-    return process.env.NEXT_PUBLIC_API_URL_PRODUCTION || 'https://web-store-api-3.onrender.com/v1';
+    return (
+      process.env.NEXT_PUBLIC_API_URL_PRODUCTION ||
+      "https://web-store-api-3.onrender.com/v1"
+    );
   }
-  
+
   // Development environment
-  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/v1';
+  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/v1";
 };
 
 const FINAL_API_BASE_URL = getApiBaseUrl();
 
 // Debug logging for API URL configuration
-console.log('API Configuration Debug:', {
+console.log("API Configuration Debug:", {
   NODE_ENV: process.env.NODE_ENV,
   NEXT_PUBLIC_API_URL_PRODUCTION: process.env.NEXT_PUBLIC_API_URL_PRODUCTION,
   NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   FINAL_API_BASE_URL: FINAL_API_BASE_URL,
-  isProduction: process.env.NODE_ENV === 'production'
+  isProduction: process.env.NODE_ENV === "production",
 });
 
 export interface ApiResponse<T = unknown> {
@@ -56,12 +59,12 @@ const apiClient: AxiosInstance = axios.create({
 });
 
 // Log API configuration for debugging
-if (typeof window !== 'undefined') {
-  console.log('API Configuration:', {
+if (typeof window !== "undefined") {
+  console.log("API Configuration:", {
     environment: process.env.NODE_ENV,
-    baseURL:  FINAL_API_BASE_URL,
+    baseURL: FINAL_API_BASE_URL,
     production: process.env.NEXT_PUBLIC_API_URL_PRODUCTION,
-    development: process.env.NEXT_PUBLIC_API_URL
+    development: process.env.NEXT_PUBLIC_API_URL,
   });
 }
 
@@ -198,17 +201,17 @@ async function apiRequest<T>(
 export const healthApi = {
   async checkHealth() {
     try {
-      const response = await apiClient.get('/health');
+      const response = await apiClient.get("/health");
       return { available: true, data: response.data };
     } catch (error) {
-      console.error('API Health Check Failed:', error);
-      return { 
-        available: false, 
-        error: error instanceof ApiError ? error.message : 'Unknown error',
-        details: error
+      console.error("API Health Check Failed:", error);
+      return {
+        available: false,
+        error: error instanceof ApiError ? error.message : "Unknown error",
+        details: error,
       };
     }
-  }
+  },
 };
 
 // Auth API functions
@@ -313,47 +316,34 @@ export const storeApi = {
   async getStoreAnalytics(storeId: string, period: string = "30d") {
     return apiRequest<{
       revenue: {
-        current: string;
-        previous: string;
+        total: string;
         currency: string;
         change: string;
       };
       orders: {
-        current: number;
-        previous: number;
+        total: number;
         change: string;
       };
       products: {
         total: number;
         active: number;
         draft: number;
-        inactive: number;
       };
       customers: {
-        current: number;
-        previous: number;
+        total: number;
         change: string;
       };
       topProducts: Array<{
-        id: string;
         name: string;
         sales: number;
         revenue: string;
       }>;
       recentOrders: Array<{
         id: string;
-        orderNumber: string;
-        customerWallet: string;
-        productName: string;
-        totalAmount: string;
-        currency: string;
+        customer: string;
+        product: string;
+        amount: string;
         status: string;
-        createdAt: string;
-      }>;
-      chartData: Array<{
-        date: string;
-        revenue: string;
-        orders: number;
       }>;
     }>(`/stores/${storeId}/analytics`, {
       method: "GET",
@@ -447,7 +437,7 @@ export const storeApi = {
     return apiRequest<{
       orders: Array<{
         id: string;
-        orderNumber: string;
+        orderId: string; // Changed from orderNumber to orderId to match API response
         customer: {
           wallet: string;
           email?: string;
@@ -456,11 +446,10 @@ export const storeApi = {
           id: string;
           name: string;
         };
-        quantity: number;
-        totalAmount: string;
+        amount: string; // Changed from totalAmount to amount to match API response
         currency: string;
         status: string;
-        paymentTxHash?: string;
+        paymentTxHash?: string | null;
         createdAt: string;
       }>;
       pagination: {
@@ -610,6 +599,89 @@ export const storeApi = {
       message: string;
     }>(`/stores/${storeId}`, {
       method: "DELETE",
+    });
+  },
+
+  // Checkout & Payment API functions
+  async createCheckoutSession(
+    storeId: string,
+    checkoutData: {
+      productId: string;
+      quantity?: number;
+      customerWallet: string;
+      customerEmail?: string;
+      currency?: "SOL" | "USDC";
+    }
+  ) {
+    return apiRequest<{
+      orderId: string;
+      orderNumber: string;
+      paymentURL: string;
+      qrCode: string;
+      amount: string;
+      currency: string;
+      reference: string;
+      expiresAt: string;
+      product: {
+        id: string;
+        name: string;
+        price: string;
+      };
+      store: {
+        id: string;
+        name: string;
+      };
+    }>(`/stores/${storeId}/checkout`, {
+      method: "POST",
+      data: checkoutData,
+    });
+  },
+
+  async verifyPayment(
+    storeId: string,
+    verificationData: {
+      orderId: string;
+      signature?: string;
+    }
+  ) {
+    return apiRequest<{
+      orderId: string;
+      orderNumber: string;
+      status: string;
+      paymentConfirmed: boolean;
+      transactionSignature?: string;
+      paidAmount?: string;
+      paidAt?: string;
+      message?: string;
+    }>(`/stores/${storeId}/checkout/verify`, {
+      method: "POST",
+      data: verificationData,
+    });
+  },
+
+  async getCheckoutStatus(storeId: string, orderId: string) {
+    return apiRequest<{
+      orderId: string;
+      orderNumber: string;
+      status: string;
+      amount: string;
+      currency: string;
+      paymentURL: string;
+      expiresAt: string;
+      transactionSignature?: string;
+      items: Array<{
+        product: {
+          id: string;
+          name: string;
+          price: string;
+        };
+        quantity: number;
+        price: string;
+      }>;
+      createdAt: string;
+      updatedAt: string;
+    }>(`/stores/${storeId}/checkout/${orderId}/status`, {
+      method: "GET",
     });
   },
 };

@@ -89,6 +89,20 @@ function ProductsContent() {
     status: 'active'
   });
 
+  // Edit product modal state
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(false);
+  const [editProduct, setEditProduct] = useState<Product | null>(null);
+  const [editProductData, setEditProductData] = useState({
+    name: '',
+    description: '',
+    price: '',
+    currency: 'SOL',
+    category: '',
+    stock: 'unlimited',
+    status: 'active'
+  });
+
   // Load store data and products
   useEffect(() => {
     const loadData = async () => {
@@ -192,6 +206,67 @@ function ProductsContent() {
       console.error('Error adding product:', err);
     } finally {
       setAddingProduct(false);
+    }
+  };
+
+  // Handle edit product
+  const handleEditProduct = (product: Product) => {
+    setEditProduct(product);
+    setEditProductData({
+      name: product.name,
+      description: product.description || '',
+      price: product.price,
+      currency: product.currency,
+      category: product.category || '',
+      stock: product.stock.toString(),
+      status: product.status
+    });
+    setShowEditModal(true);
+  };
+
+  // Handle update product
+  const handleUpdateProduct = async () => {
+    if (!storeData || !editProduct || !editProductData.name || !editProductData.price) return;
+
+    try {
+      setEditingProduct(true);
+
+      await storeApi.updateProduct(storeData.id, editProduct.id, {
+        name: editProductData.name,
+        description: editProductData.description || undefined,
+        price: parseFloat(editProductData.price),
+        currency: editProductData.currency as 'SOL' | 'USDC',
+        category: editProductData.category || undefined,
+        stock: editProductData.stock === 'unlimited' ? 'unlimited' : parseInt(editProductData.stock),
+        status: editProductData.status as 'active' | 'draft' | 'inactive',
+      });
+
+      // Close modal and reset state
+      setShowEditModal(false);
+      setEditProduct(null);
+      setEditProductData({
+        name: '',
+        description: '',
+        price: '',
+        currency: 'SOL',
+        category: '',
+        stock: 'unlimited',
+        status: 'active'
+      });
+
+      // Refresh products
+      const productsData = await storeApi.getStoreProducts(storeData.id, {
+        page: currentPage,
+        limit: 12,
+        status: statusFilter !== 'all' ? statusFilter : undefined,
+        category: categoryFilter !== 'all' ? categoryFilter : undefined,
+        search: searchTerm || undefined,
+      });
+      setProducts(productsData as ProductsResponse);
+    } catch (err) {
+      console.error('Error updating product:', err);
+    } finally {
+      setEditingProduct(false);
     }
   };
 
@@ -431,7 +506,10 @@ function ProductsContent() {
 
                       {/* Action Buttons */}
                       <div className="flex gap-2">
-                        <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                        <button
+                          onClick={() => handleEditProduct(product)}
+                          className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                        >
                           <Edit className="w-4 h-4" />
                           Edit
                         </button>
@@ -636,6 +714,162 @@ function ProductsContent() {
                         <>
                           <Save className="w-4 h-4" />
                           Add Product
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Edit Product Modal */}
+          {showEditModal && editProduct && (
+            <div className="fixed inset-0 bg-black/80 bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold text-gray-900">Edit Product</h2>
+                    <button
+                      onClick={() => {
+                        setShowEditModal(false);
+                        setEditProduct(null);
+                      }}
+                      className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Product Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={editProductData.name}
+                        onChange={(e) => setEditProductData({ ...editProductData, name: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="Enter product name"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Description
+                      </label>
+                      <textarea
+                        value={editProductData.description}
+                        onChange={(e) => setEditProductData({ ...editProductData, description: e.target.value })}
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="Enter product description"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Price *
+                        </label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={editProductData.price}
+                          onChange={(e) => setEditProductData({ ...editProductData, price: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          placeholder="0.00"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Currency
+                        </label>
+                        <select
+                          value={editProductData.currency}
+                          onChange={(e) => setEditProductData({ ...editProductData, currency: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        >
+                          <option value="SOL">SOL</option>
+                          <option value="USDC">USDC</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Category
+                      </label>
+                      <input
+                        type="text"
+                        value={editProductData.category}
+                        onChange={(e) => setEditProductData({ ...editProductData, category: e.target.value })}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="e.g., Digital Art, Tools, Templates"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Stock
+                        </label>
+                        <input
+                          type="text"
+                          value={editProductData.stock}
+                          onChange={(e) => setEditProductData({ ...editProductData, stock: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          placeholder="unlimited or number"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Status
+                        </label>
+                        <select
+                          value={editProductData.status}
+                          onChange={(e) => setEditProductData({ ...editProductData, status: e.target.value })}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                        >
+                          <option value="active">Active</option>
+                          <option value="draft">Draft</option>
+                          <option value="inactive">Inactive</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Show current product info */}
+                    <div className="bg-gray-50 p-3 rounded-lg">
+                      <p className="text-sm text-gray-600 mb-1">Current Sales: {editProduct.sales}</p>
+                      <p className="text-sm text-gray-600">Current Revenue: {editProduct.revenue} {editProduct.currency}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3 mt-6">
+                    <button
+                      onClick={() => {
+                        setShowEditModal(false);
+                        setEditProduct(null);
+                      }}
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleUpdateProduct}
+                      disabled={editingProduct || !editProductData.name || !editProductData.price}
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {editingProduct ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          Updating...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="w-4 h-4" />
+                          Update Product
                         </>
                       )}
                     </button>

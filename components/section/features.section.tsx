@@ -49,7 +49,7 @@ export default function Features() {
       <section className="border-b border-gray-700 px-10">
         <div className="grid md:grid-cols-2">
           {/* Bitcoin & IPFS Feature */}
-          <div className="p-12 md:p-16 border-r border-gray-700 flex flex-col">
+          <div className="p-12 md:p-16 lg:border-r  sm:border-transparent border-gray-700 flex flex-col">
             <h2 className="text-3xl md:text-4xl font-bold mb-12">
             Recieve payments in Solana
             </h2>
@@ -83,7 +83,7 @@ export default function Features() {
               {/* URL Bar Mockup */}
               <div className="bg-pink-100 rounded-full px-6 py-4 border-2 border-gray-700 flex items-center relative">
                 <span className="text-base text-gray-600">
-                  https://solanastore.vercel.app<span className="font-bold text-gray-900">/mystore</span>
+                https://web-store-mauve.vercel.app/<span className="font-bold text-gray-900">my-store-name</span>
                 </span>
                 {/* Cursor Hand */}
                 <div className="absolute -bottom-2 left-1/3">

@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Wallet, CheckCircle, AlertCircle, ExternalLink } from 'lucide-react';
 import { useWallet } from '@/hooks/useWallet';
-import Link from 'next/link';
 
 interface WalletConnectButtonProps {
   onSuccess?: (address: string) => void;
@@ -10,7 +9,7 @@ interface WalletConnectButtonProps {
   className?: string;
 }
 
-export function WalletConnectButton({ 
+export function WalletConnectButtonMini({ 
   onSuccess, 
   onError, 
   className = '' 
@@ -79,7 +78,7 @@ export function WalletConnectButton({
           </button>
         </div>
 
-        {!isConnected && showInstructions && (
+        {showInstructions && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <h4 className="font-medium text-blue-900 mb-2">How to install Phantom:</h4>
             <ol className="list-decimal list-inside space-y-1 text-sm text-blue-800">
@@ -115,8 +114,6 @@ export function WalletConnectButton({
         >
           Disconnect Wallet
         </button>
-
-        <Link href={'/admin'} className='flex items-center justify-center w-full bg-blue-600 text-white px-4 py-2.5 rounded-md'>Dashboard</Link>
       </div>
     );
   }
@@ -161,12 +158,6 @@ export function WalletConnectButton({
         )}
       </button>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-        <p className="text-xs text-blue-800">
-          <span className="font-medium">Secure Connection:</span> Your wallet will prompt you to sign a message to verify ownership. 
-          This doesn&apos;t cost any SOL and keeps your account secure.
-        </p>
-      </div>
     </div>
   );
 }

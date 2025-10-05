@@ -35,7 +35,7 @@ interface StoreData {
 
 interface Order {
   id: string;
-  orderNumber: string;
+  orderId: string; // Changed from orderNumber to match API response
   customer: {
     wallet: string;
     email?: string;
@@ -44,11 +44,10 @@ interface Order {
     id: string;
     name: string;
   };
-  quantity: number;
-  totalAmount: string;
+  amount: string; // Changed from totalAmount to match API response
   currency: string;
   status: string;
-  paymentTxHash?: string;
+  paymentTxHash?: string | null;
   createdAt: string;
 }
 
@@ -256,16 +255,17 @@ function OrdersContent() {
         <main className="flex-1 overflow-auto p-6">
           <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[1200px]">
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
-                    <th className="text-left py-3 px-6 font-medium text-gray-900">Order ID</th>
-                    <th className="text-left py-3 px-6 font-medium text-gray-900">Customer</th>
-                    <th className="text-left py-3 px-6 font-medium text-gray-900">Product</th>
-                    <th className="text-left py-3 px-6 font-medium text-gray-900">Amount</th>
-                    <th className="text-left py-3 px-6 font-medium text-gray-900">Status</th>
-                    <th className="text-left py-3 px-6 font-medium text-gray-900">Date</th>
-                    <th className="text-left py-3 px-6 font-medium text-gray-900">Actions</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900 w-48">Order ID</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900 w-64">Customer</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900 w-48">Product</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900 w-32">Amount</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900 w-40">Status</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900 w-40">Date</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900 w-32">Transaction</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900 w-24">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -274,46 +274,34 @@ function OrdersContent() {
                       const StatusIcon = statusConfig[order.status as keyof typeof statusConfig]?.icon || AlertCircle;
                       return (
                         <tr key={order.id} className="hover:bg-gray-50">
-                          <td className="py-4 px-6">
-                            <div className="font-medium text-gray-900">{order.orderNumber}</div>
-                            <div className="text-sm text-gray-500">
-                              {order.paymentTxHash ? (
-                                <a
-                                  href={`https://explorer.solana.com/tx/${order.paymentTxHash}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
-                                >
-                                  {order.paymentTxHash.slice(0, 8)}...
-                                  <ExternalLink className="w-3 h-3" />
-                                </a>
-                              ) : (
-                                'No transaction'
-                              )}
-                            </div>
+                          <td className="py-4 px-4">
+                            <div className="font-medium text-gray-900 text-sm">{order.orderId}</div>
+                            <div className="text-xs text-gray-500">ID: {order.id.slice(0, 8)}...</div>
                           </td>
-                          <td className="py-4 px-6">
-                            <div className="font-medium text-gray-900">{order.customer.wallet}</div>
+                          <td className="py-4 px-4">
+                            <div className="font-medium text-gray-900 text-sm break-all">
+                              {order.customer.wallet.slice(0, 8)}...{order.customer.wallet.slice(-4)}
+                            </div>
                             {order.customer.email && (
-                              <div className="text-sm text-gray-500">{order.customer.email}</div>
+                              <div className="text-xs text-gray-500 break-all">{order.customer.email}</div>
                             )}
                           </td>
-                          <td className="py-4 px-6">
-                            <div className="font-medium text-gray-900">{order.product.name}</div>
-                            <div className="text-sm text-gray-500">Qty: {order.quantity}</div>
+                          <td className="py-4 px-4">
+                            <div className="font-medium text-gray-900 text-sm">{order.product.name}</div>
+                            <div className="text-xs text-gray-500">ID: {order.product.id.slice(0, 8)}...</div>
                           </td>
-                          <td className="py-4 px-6">
-                            <div className="font-semibold text-gray-900">
-                              {order.totalAmount} {order.currency}
+                          <td className="py-4 px-4">
+                            <div className="font-semibold text-gray-900 text-sm">
+                              {order.amount} {order.currency}
                             </div>
                           </td>
-                          <td className="py-4 px-6">
+                          <td className="py-4 px-4">
                             <div className="flex items-center gap-2">
-                              <StatusIcon className="w-4 h-4" />
+                              <StatusIcon className={`w-4 h-4 ${statusConfig[order.status as keyof typeof statusConfig]?.color || 'text-gray-600'}`} />
                               <select
                                 value={order.status}
                                 onChange={(e) => handleStatusUpdate(order.id, e.target.value)}
-                                className={`px-3 py-1 rounded-full text-sm font-medium border-0 cursor-pointer ${statusConfig[order.status as keyof typeof statusConfig]?.bg || 'bg-gray-100'} ${statusConfig[order.status as keyof typeof statusConfig]?.color || 'text-gray-600'}`}
+                                className={`px-2 py-1 rounded-full text-xs font-medium border-0 cursor-pointer ${statusConfig[order.status as keyof typeof statusConfig]?.bg || 'bg-gray-100'} ${statusConfig[order.status as keyof typeof statusConfig]?.color || 'text-gray-600'}`}
                               >
                                 <option value="pending">Pending</option>
                                 <option value="processing">Processing</option>
@@ -323,23 +311,38 @@ function OrdersContent() {
                               </select>
                             </div>
                           </td>
-                          <td className="py-4 px-6">
+                          <td className="py-4 px-4">
                             <div className="flex items-center gap-1 text-gray-900">
-                              <Calendar className="w-4 h-4 text-gray-400" />
-                              <span className="text-sm">
+                              <Calendar className="w-3 h-3 text-gray-400" />
+                              <span className="text-xs">
                                 {new Date(order.createdAt).toLocaleDateString()}
                               </span>
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-xs text-gray-500">
                               {new Date(order.createdAt).toLocaleTimeString()}
                             </div>
                           </td>
-                          <td className="py-4 px-6">
-                            <div className="flex items-center gap-2">
-                              <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
+                          <td className="py-4 px-4">
+                            {order.paymentTxHash ? (
+                              <a
+                                href={`https://explorer.solana.com/tx/${order.paymentTxHash}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-xs"
+                              >
+                                {order.paymentTxHash.slice(0, 6)}...
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            ) : (
+                              <span className="text-xs text-gray-400">No transaction</span>
+                            )}
+                          </td>
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-1">
+                              <button className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100">
                                 <Eye className="w-4 h-4" />
                               </button>
-                              <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
+                              <button className="p-1 text-gray-400 hover:text-gray-600 rounded hover:bg-gray-100">
                                 <MoreHorizontal className="w-4 h-4" />
                               </button>
                             </div>
@@ -349,7 +352,7 @@ function OrdersContent() {
                     })
                   ) : (
                     <tr>
-                      <td colSpan={7} className="py-12 text-center">
+                      <td colSpan={8} className="py-12 text-center">
                         <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                         <h3 className="text-lg font-medium text-gray-900 mb-2">No orders found</h3>
                         <p className="text-gray-600">

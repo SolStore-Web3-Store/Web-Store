@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Wallet, Store, Link as LinkIcon, Image as ImageIcon, CheckCircle, ArrowRight, ArrowLeft, Info, AlertCircle } from 'lucide-react';
+import { Wallet, Store, Link as LinkIcon, Image as ImageIcon, CheckCircle, ArrowRight, ArrowLeft, Info, AlertCircle, ChevronDown, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import Stepper from '@/components/ui/stepper';
 import Image from 'next/image';
@@ -143,21 +143,7 @@ export default function Onboard() {
 
 
 
-  const isStepValid = () => {
-    // Backend must be available for all steps except wallet connection
-    if (currentStep > 0 && backendAvailable === false) {
-      return false;
-    }
 
-    switch (currentStep) {
-      case 0: return isConnected;
-      case 1: return formData.storeName.trim().length > 0;
-      case 2: return formData.storeSlug.trim().length > 0 && slugAvailable === true;
-      case 3: return true; // Icon is optional
-      case 4: return true;
-      default: return false;
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -457,11 +443,11 @@ export default function Onboard() {
                 Your Web3 store is ready. You can now start adding products and accepting SOL payments.
               </p>
               {createdStore && (
-                <div className="bg-gray-50 rounded-lg p-6 max-w-md mx-auto">
-                  <h3 className="font-medium text-gray-900 mb-2">Store Details:</h3>
+                <div className="bg-gray-50 rounded-lg p-6 max-w-md mx-auto border border-gray-400">
+                  <h3 className="font-medium text-gray-900 mb-2 text-left ">Store Details:</h3>
                   <div className="text-left space-y-2 text-sm">
-                    <p><span className="font-medium">Name:</span> {createdStore.name}</p>
-                    <p><span className="font-medium">URL:</span> solstore.vercel.app/{createdStore.slug}</p>
+                    <p><span className="font-medium ">Name:</span> {createdStore.name}</p>
+                    <p><span className="font-medium">URL:</span><a href={`https://web-store-mauve.vercel.app/${createdStore.slug}`} className='hover:underline hover:text-blue-600'> web-store-mauve.vercel.app/{createdStore.slug}</a></p>
                     <p><span className="font-medium">Wallet:</span> {walletAddress?.slice(0, 8)}...{walletAddress?.slice(-8)}</p>
                     <p><span className="font-medium">Status:</span> {createdStore.status}</p>
                   </div>
@@ -470,10 +456,10 @@ export default function Onboard() {
               <div className="flex gap-4 justify-center">
                 <Link
                   href='/admin'
-                  className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
-                  target='_blank'
+                  className="flex items-center gap-1 bg-indigo-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+                  
                 >
-                 <ArrowRight/> Go to Dashboard
+                 <ChevronRight/> Go to Dashboard
                 </Link>
                 {createdStore && (
                   <Link
@@ -507,8 +493,8 @@ export default function Onboard() {
 
             <button
               onClick={handleNext}
-              disabled={!isStepValid() || isLoading}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${isStepValid() && !isLoading
+              disabled={isLoading}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${ !isLoading
                 ? 'bg-indigo-600 text-white hover:bg-indigo-700'
                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}

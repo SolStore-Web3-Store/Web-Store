@@ -40,8 +40,11 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   };
 
   const handleCheckout = () => {
-    // TODO: Implement checkout logic
-    alert('Checkout functionality will be implemented soon!');
+    // Close the cart drawer
+    onClose();
+    
+    // Navigate to checkout page
+    window.location.href = `/${storeSlug}/checkout`;
   };
 
   return (
