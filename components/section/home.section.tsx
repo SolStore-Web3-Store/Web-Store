@@ -53,15 +53,15 @@ export default function WebPlatform() {
 
           {/* Navigation Links */}
           <nav className="hidden sm:flex items-center gap-8">
-            <a href="/explore" className="text-gray-700 hover:text-gray-900 font-medium">
+            <Link href="/explore" className="text-gray-700 hover:text-gray-900 font-medium">
               Explore
-            </a>
-            <a href="/features" className="text-gray-700 hover:text-gray-900 font-medium">
+            </Link>
+            <Link href="/features" className="text-gray-700 hover:text-gray-900 font-medium">
               Features
-            </a>
-            <a href="/howitworks" className="text-gray-700 hover:text-gray-900 font-medium">
+            </Link>
+            <Link href="/howitworks" className="text-gray-700 hover:text-gray-900 font-medium">
               How it works?
-            </a>
+            </Link>
             <a href="#" className="text-gray-700 hover:text-gray-900 font-medium hidden">
               Pricing
             </a>

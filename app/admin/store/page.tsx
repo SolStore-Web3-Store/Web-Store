@@ -1,5 +1,5 @@
 "use client";
-import React, { Suspense, useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Sidebar from '@/components/ui/sidebar';
 import {
@@ -68,7 +68,7 @@ function StoreDashboardContent() {
   const { isConnected } = useWallet();
   const searchParams = useSearchParams();
   const currentStore = searchParams.get('store');
-  
+
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [storeData, setStoreData] = useState<StoreData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -77,189 +77,189 @@ function StoreDashboardContent() {
 
 
   // Load store analytics function
-  const loadAnalytics = async (isRefresh = false) => {
-      if (!isConnected || !currentStore) {
-        setLoading(false);
-        return;
+  const loadAnalytics = useCallback(async (isRefresh = false) => {
+    if (!isConnected || !currentStore) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      if (isRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
       }
+      setError(null);
 
+      // Get store data first to get the store ID
+      const store = await storeApi.getStoreBySlug(currentStore);
+      setStoreData({
+        ...store,
+        settings: store.settings as Record<string, unknown> || {}
+      });
+
+      // Try to get analytics from the dedicated endpoint first
+      let analyticsData;
       try {
-        if (isRefresh) {
-          setRefreshing(true);
-        } else {
-          setLoading(true);
-        }
-        setError(null);
+        console.log('Attempting to fetch analytics from API endpoint...');
+        const rawAnalytics = await storeApi.getStoreAnalytics(store.id);
+        console.log('Analytics data received from API:', rawAnalytics);
 
-        // Get store data first to get the store ID
-        const store = await storeApi.getStoreBySlug(currentStore);
-        setStoreData({
-          ...store,
-          settings: store.settings as Record<string, unknown> || {}
+        // Transform the API response to match our interface
+        analyticsData = {
+          revenue: {
+            total: rawAnalytics.revenue?.total || '0',
+            currency: rawAnalytics.revenue?.currency || 'SOL',
+            change: rawAnalytics.revenue?.change || '0%'
+          },
+          orders: {
+            total: rawAnalytics.orders?.total || 0,
+            change: rawAnalytics.orders?.change || '0%'
+          },
+          products: {
+            total: rawAnalytics.products?.total || 0,
+            active: rawAnalytics.products?.active || 0,
+            draft: rawAnalytics.products?.draft || 0
+          },
+          customers: {
+            total: rawAnalytics.customers?.total || 0,
+            change: rawAnalytics.customers?.change || '0%'
+          },
+          topProducts: rawAnalytics.topProducts?.map(product => ({
+            name: product.name,
+            sales: product.sales,
+            revenue: product.revenue
+          })) || [],
+          recentOrders: rawAnalytics.recentOrders?.map(order => ({
+            id: order.id,
+            customer: order.customer,
+            product: order.product,
+            amount: order.amount,
+            status: order.status
+          })) || []
+        };
+
+        console.log('Transformed analytics data:', analyticsData);
+        setAnalytics(analyticsData);
+      } catch (analyticsError) {
+        console.log('Analytics endpoint not available, calculating from raw data...', analyticsError);
+
+        // Fallback: Calculate analytics from orders and products
+        console.log('Fetching orders and products for analytics calculation...');
+        const [orders, products] = await Promise.all([
+          storeApi.getStoreOrders(store.id, { limit: 100 }),
+          storeApi.getStoreProducts(store.id, { limit: 100 })
+        ]);
+
+        console.log('Orders data:', orders);
+        console.log('Products data:', products);
+
+        // Calculate revenue from completed orders
+        const completedOrders = orders.orders.filter(order => order.status === 'completed');
+        const totalRevenue = completedOrders.reduce((sum, order) => {
+          return sum + parseFloat(order.amount);
+        }, 0);
+
+        // Calculate recent orders (last 5)
+        const recentOrders = orders.orders
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .slice(0, 5)
+          .map(order => ({
+            id: order.id,
+            orderId: order.orderId,
+            customerWallet: order.customer.wallet,
+            productName: order.product.name,
+            totalAmount: order.amount,
+            currency: order.currency,
+            status: order.status,
+            createdAt: order.createdAt
+          }));
+
+        // Calculate top products by sales
+        const productSales = new Map<string, { product: { id: string; name: string }; sales: number; revenue: number }>();
+
+        completedOrders.forEach(order => {
+          const productId = order.product.id;
+          const existing = productSales.get(productId) || {
+            product: order.product,
+            sales: 0,
+            revenue: 0
+          };
+
+          // Since quantity is not available in the order object, assume 1 item per order
+          existing.sales += 1;
+          existing.revenue += parseFloat(order.amount);
+          productSales.set(productId, existing);
         });
 
-        // Try to get analytics from the dedicated endpoint first
-        let analyticsData;
-        try {
-          console.log('Attempting to fetch analytics from API endpoint...');
-          const rawAnalytics = await storeApi.getStoreAnalytics(store.id);
-          console.log('Analytics data received from API:', rawAnalytics);
-          
-          // Transform the API response to match our interface
-          analyticsData = {
-            revenue: {
-              total: rawAnalytics.revenue?.total || '0',
-              currency: rawAnalytics.revenue?.currency || 'SOL',
-              change: rawAnalytics.revenue?.change || '0%'
-            },
-            orders: {
-              total: rawAnalytics.orders?.total || 0,
-              change: rawAnalytics.orders?.change || '0%'
-            },
-            products: {
-              total: rawAnalytics.products?.total || 0,
-              active: rawAnalytics.products?.active || 0,
-              draft: rawAnalytics.products?.draft || 0
-            },
-            customers: {
-              total: rawAnalytics.customers?.total || 0,
-              change: rawAnalytics.customers?.change || '0%'
-            },
-            topProducts: rawAnalytics.topProducts?.map(product => ({
-              name: product.name,
-              sales: product.sales,
-              revenue: product.revenue
-            })) || [],
-            recentOrders: rawAnalytics.recentOrders?.map(order => ({
-              id: order.id,
-              customer: order.customer,
-              product: order.product,
-              amount: order.amount,
-              status: order.status
-            })) || []
-          };
-          
-          console.log('Transformed analytics data:', analyticsData);
-          setAnalytics(analyticsData);
-        } catch (analyticsError) {
-          console.log('Analytics endpoint not available, calculating from raw data...', analyticsError);
-          
-          // Fallback: Calculate analytics from orders and products
-          console.log('Fetching orders and products for analytics calculation...');
-          const [orders, products] = await Promise.all([
-            storeApi.getStoreOrders(store.id, { limit: 100 }),
-            storeApi.getStoreProducts(store.id, { limit: 100 })
-          ]);
-          
-          console.log('Orders data:', orders);
-          console.log('Products data:', products);
+        const topProducts = Array.from(productSales.values())
+          .sort((a, b) => b.revenue - a.revenue)
+          .slice(0, 5)
+          .map(item => ({
+            id: item.product.id,
+            name: item.product.name,
+            sales: item.sales,
+            revenue: item.revenue.toFixed(4)
+          }));
 
-          // Calculate revenue from completed orders
-          const completedOrders = orders.orders.filter(order => order.status === 'completed');
-          const totalRevenue = completedOrders.reduce((sum, order) => {
-            return sum + parseFloat(order.totalAmount);
-          }, 0);
+        // Count unique customers
+        const uniqueCustomers = new Set(completedOrders.map(order => order.customer.wallet)).size;
 
-          // Calculate recent orders (last 5)
-          const recentOrders = orders.orders
-            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-            .slice(0, 5)
-            .map(order => ({
-              id: order.id,
-              orderNumber: order.orderNumber,
-              customerWallet: order.customer.wallet,
-              productName: order.product.name,
-              totalAmount: order.totalAmount,
-              currency: order.currency,
-              status: order.status,
-              createdAt: order.createdAt
-            }));
+        // Calculate product stats
+        const activeProducts = products.products.filter(p => p.status === 'active').length;
+        const draftProducts = products.products.filter(p => p.status === 'draft').length;
 
-          // Calculate top products by sales
-          const productSales = new Map<string, { product: unknown; sales: number; revenue: number }>();
-          
-          completedOrders.forEach(order => {
-            const productId = order.product.id;
-            const existing = productSales.get(productId) || { 
-              product: order.product, 
-              sales: 0, 
-              revenue: 0 
-            };
-            
-            existing.sales += order.quantity;
-            existing.revenue += parseFloat(order.totalAmount);
-            productSales.set(productId, existing);
-          });
+        // Set calculated analytics data
+        const calculatedAnalytics = {
+          revenue: {
+            total: totalRevenue.toFixed(4),
+            currency: 'SOL',
+            change: totalRevenue > 0 ? `+${((totalRevenue / Math.max(1, totalRevenue)) * 100).toFixed(1)}%` : '0%'
+          },
+          orders: {
+            total: orders.orders.length,
+            change: orders.orders.length > 0 ? `+${orders.orders.length}` : '0'
+          },
+          products: {
+            total: products.products.length,
+            active: activeProducts,
+            draft: draftProducts
+          },
+          customers: {
+            total: uniqueCustomers,
+            change: uniqueCustomers > 0 ? `+${uniqueCustomers}` : '0'
+          },
+          topProducts,
+          recentOrders: recentOrders.map(order => ({
+            id: order.orderId,
+            customer: order.customerWallet,
+            product: order.productName,
+            amount: order.totalAmount,
+            status: order.status
+          }))
+        };
 
-          const topProducts = Array.from(productSales.values())
-            .sort((a, b) => b.revenue - a.revenue)
-            .slice(0, 5)
-            .map(item => ({
-              id: item.product.id,
-              name: item.product.name,
-              sales: item.sales,
-              revenue: item.revenue.toFixed(4)
-            }));
-
-          // Count unique customers
-          const uniqueCustomers = new Set(completedOrders.map(order => order.customer.wallet)).size;
-
-          // Calculate product stats
-          const activeProducts = products.products.filter(p => p.status === 'active').length;
-          const draftProducts = products.products.filter(p => p.status === 'draft').length;
-          const inactiveProducts = products.products.filter(p => p.status === 'inactive').length;
-
-          // Set calculated analytics data
-          const calculatedAnalytics = {
-            revenue: {
-              total: totalRevenue.toFixed(4),
-              currency: 'SOL',
-              change: totalRevenue > 0 ? `+${((totalRevenue / Math.max(1, totalRevenue)) * 100).toFixed(1)}%` : '0%'
-            },
-            orders: {
-              total: orders.orders.length,
-              change: orders.orders.length > 0 ? `+${orders.orders.length}` : '0'
-            },
-            products: {
-              total: products.products.length,
-              active: activeProducts,
-              draft: draftProducts
-            },
-            customers: {
-              total: uniqueCustomers,
-              change: uniqueCustomers > 0 ? `+${uniqueCustomers}` : '0'
-            },
-            topProducts,
-            recentOrders: recentOrders.map(order => ({
-              id: order.orderNumber,
-              customer: order.customerWallet,
-              product: order.productName,
-              amount: order.totalAmount,
-              status: order.status
-            }))
-          };
-          
-          console.log('Calculated analytics:', calculatedAnalytics);
-          setAnalytics(calculatedAnalytics);
-        }
-
-      } catch (err) {
-        console.error('Error loading analytics:', err);
-        if (err instanceof ApiError) {
-          setError(`${err.message} (Code: ${err.code})`);
-        } else {
-          setError('Failed to load store analytics');
-        }
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
+        console.log('Calculated analytics:', calculatedAnalytics);
+        setAnalytics(calculatedAnalytics);
       }
-    };
+
+    } catch (err) {
+      console.error('Error loading analytics:', err);
+      if (err instanceof ApiError) {
+        setError(`${err.message} (Code: ${err.code})`);
+      } else {
+        setError('Failed to load store analytics');
+      }
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, [isConnected, currentStore]);
 
   // Load analytics on component mount
   useEffect(() => {
     loadAnalytics();
-  }, [isConnected, currentStore]);
+  }, [isConnected, currentStore, loadAnalytics]);
 
   // Refresh function
   const handleRefresh = () => {
@@ -334,7 +334,7 @@ function StoreDashboardContent() {
     );
   }
 
-  
+
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -363,7 +363,7 @@ function StoreDashboardContent() {
                   <div className="text-sm text-red-700">
                     <p className="font-medium">Error loading analytics:</p>
                     <p>{error}</p>
-                    <button 
+                    <button
                       onClick={handleRefresh}
                       className="mt-2 text-red-600 hover:text-red-800 underline text-xs"
                     >
@@ -405,7 +405,7 @@ function StoreDashboardContent() {
               <span className="text-sm text-blue-700">Refreshing analytics data...</span>
             </div>
           )}
-          
+
           {analytics ? (
             <>
               {/* Stats Cards */}
@@ -481,7 +481,7 @@ function StoreDashboardContent() {
               <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No Analytics Data</h3>
               <p className="text-gray-600 mb-4">Unable to load store analytics at this time.</p>
-              
+
               {error && (
                 <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded p-3 max-w-md mx-auto mb-4">
                   <strong>Error:</strong> {error}
@@ -518,8 +518,8 @@ function StoreDashboardContent() {
                               </span>
                             </div>
                             <p className="text-sm text-gray-600" title={order.customer}>
-                              {order.customer ? 
-                                `${order.customer.slice(0, 8)}...${order.customer.slice(-4)}` : 
+                              {order.customer ?
+                                `${order.customer.slice(0, 8)}...${order.customer.slice(-4)}` :
                                 'Unknown wallet'
                               }
                             </p>

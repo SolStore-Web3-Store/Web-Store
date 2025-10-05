@@ -1,31 +1,28 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { CheckCircle, ArrowLeft, Download, Mail } from 'lucide-react';
-import { storeApi } from '@/lib/api';
+import { CheckCircle, ArrowLeft, Mail } from 'lucide-react';
+
+interface OrderData {
+    orderNumber: string;
+    status: string;
+    message: string;
+}
 
 export default function PaymentSuccessPage() {
     const params = useParams();
     const router = useRouter();
     const searchParams = useSearchParams();
     const storeSlug = params.storeSlug as string;
-    
-    const [orderData, setOrderData] = useState<any>(null);
+
+    const [orderData, setOrderData] = useState<OrderData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     const orderId = searchParams.get('orderId');
     const orderNumber = searchParams.get('orderNumber');
 
-    useEffect(() => {
-        if (orderId) {
-            loadOrderData();
-        } else {
-            setLoading(false);
-        }
-    }, [orderId]);
-
-    const loadOrderData = async () => {
+    const loadOrderData = useCallback(async () => {
         try {
             // In a real implementation, you'd fetch the order details
             // For now, we'll show a generic success message
@@ -40,7 +37,15 @@ export default function PaymentSuccessPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [orderNumber]);
+
+    useEffect(() => {
+        if (orderId) {
+            loadOrderData();
+        } else {
+            setLoading(false);
+        }
+    }, [orderId, loadOrderData]);
 
     if (loading) {
         return (
@@ -128,10 +133,10 @@ export default function PaymentSuccessPage() {
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left">
                         <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
                             <Mail className="w-4 h-4" />
-                            What's Next?
+                            What&apos;s Next?
                         </h3>
                         <ul className="text-sm text-blue-800 space-y-2">
-                            <li>• You'll receive a confirmation email shortly</li>
+                            <li>• You&apos;ll receive a confirmation email shortly</li>
                             <li>• Download links will be sent to your email</li>
                             <li>• Keep your order number for future reference</li>
                             <li>• Contact support if you have any questions</li>
@@ -146,7 +151,7 @@ export default function PaymentSuccessPage() {
                         >
                             Continue Shopping
                         </button>
-                        
+
                         <button
                             onClick={() => window.print()}
                             className="w-full h-12 border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium rounded-lg transition-colors"

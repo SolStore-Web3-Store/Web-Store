@@ -61,7 +61,7 @@ export function WalletConnectDialog({ isOpen, onClose, onSuccess }: WalletConnec
             <div className="text-blue-800 text-sm">
               <p className="font-medium mb-1">How to connect:</p>
               <ol className="list-decimal list-inside space-y-1 text-xs">
-                <li>Click "Connect Wallet" below</li>
+                <li>Click &quot;Connect Wallet&quot; below</li>
                 <li>Approve the connection in your Phantom wallet popup</li>
                 <li>Sign the authentication message</li>
               </ol>
@@ -96,7 +96,7 @@ export function WalletConnectDialog({ isOpen, onClose, onSuccess }: WalletConnec
                 <p className="text-sm">{walletError || error}</p>
                 {(walletError?.includes('cancelled') || walletError?.includes('rejected')) && (
                   <p className="text-xs mt-1 text-red-600">
-                    Click "Connect Wallet&quot; again and approve the connection in your Phantom wallet.
+                    Click &quot;Connect Wallet&quot; again and approve the connection in your Phantom wallet.
                   </p>
                 )}
               </div>

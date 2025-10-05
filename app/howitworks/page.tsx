@@ -193,7 +193,7 @@ export default function HowItWorksPage() {
               Why Choose SolStore?
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Built specifically for the Web3 ecosystem with features that traditional platforms can't offer.
+              Built specifically for the Web3 ecosystem with features that traditional platforms can&apos;t offer.
             </p>
           </div>
           
