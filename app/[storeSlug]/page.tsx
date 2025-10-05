@@ -282,6 +282,7 @@ export default function Store({ params }: StorePageProps) {
   return (
     <div className="flex h-full w-full bg-white text-black">
       {/* Sidebar */}
+
       <aside className={`fixed lg:static inset-y-0 left-0 w-64 bg-white border-r border-gray-200 transition-transform duration-300 z-50 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="flex flex-col h-full">
           {/* Sidebar Header */}
@@ -290,8 +291,9 @@ export default function Store({ params }: StorePageProps) {
               onClick={() => setIsSidebarOpen(prev => !prev)}
               className="p-2 hover:bg-gray-100 rounded-md"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-5 h-5" /> 
             </button>
+          
 
           </div>
 
@@ -325,12 +327,7 @@ export default function Store({ params }: StorePageProps) {
               )}
             </div>
 
-            <a
-              href="#"
-              className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md transition-colors"
-            >
-              hello
-            </a>
+        
           </nav>
 
           {/* Sidebar Footer */}
@@ -371,13 +368,15 @@ export default function Store({ params }: StorePageProps) {
               onClick={() => setIsSidebarOpen(true)}
               className="lg:hidden p-2 hover:bg-gray-100 rounded-md text-black"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-5 h-5" />   
             </button>
+
+            {storeData.name} | SolStore
             <div className="flex-1" />
             
             {/* Debug Info - Remove in production */}
-            <div className="text-xs bg-yellow-100 p-2 rounded mr-2">
-              Cart: {cart.items.length} | Store: {cartItemCount} | Slug: {storeSlug}
+            <div className="text-xs bg-yellow-100 p-2 rounded mr-2 border border-gray-400">
+              Cart: {cart.items.length} | Store: {cartItemCount} | URL: {storeSlug}
             </div>
             
             <button className="p-2 hover:bg-gray-100 rounded-md text-black">
@@ -465,9 +464,9 @@ export default function Store({ params }: StorePageProps) {
 
               {/* Store Actions */}
               <div className="flex flex-col gap-2">
-                <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors border border-gray-400/20">
                   <Share2 className="w-4 h-4" />
-                  Share Store
+                  Share Store Link
                 </button>
               </div>
             </div>
@@ -772,17 +771,18 @@ export default function Store({ params }: StorePageProps) {
                   className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm text-gray-700"
                 >
                   <ShoppingCart className="w-4 h-4" />
-                  <span>Create your SolStore</span>
+                  <span>Create your SolStore Today</span>
                 </Link>
 
                 <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <span>Powered by SolStore</span>
+                  <span className='flex gap-4 items-center'>Powered by  <Image src={'https://earn.superteam.fun/assets/solana-powered.svg'} className='rounded-md' width={150} height={30} alt='superteam_logo' />
+                  </span>
                   <span>•</span>
                   <span>Web3 Commerce</span>
                 </div>
               </div>
 
-              <div className="text-center md:text-right">
+              <div className="flex items-center gap-2 text-center md:text-right">
                 <p className="text-sm text-gray-600 mb-1">© 2025 {storeData.name}</p>
                 <p className="text-xs text-gray-500">
                   Owner: {storeData.owner.walletAddress.slice(0, 4)}...{storeData.owner.walletAddress.slice(-4)}

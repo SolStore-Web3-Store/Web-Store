@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Wallet, Store, Link as LinkIcon, Image as ImageIcon, CheckCircle, ArrowRight, ArrowLeft, Info, AlertCircle, ChevronDown, ChevronRight } from 'lucide-react';
+import { Wallet, Store, Link as LinkIcon, Image as ImageIcon, CheckCircle, ArrowRight, ArrowLeft, Info, AlertCircle, ChevronDown, ChevronRight, InfoIcon } from 'lucide-react';
 import Link from 'next/link';
 import Stepper from '@/components/ui/stepper';
 import Image from 'next/image';
@@ -107,6 +107,22 @@ export default function Onboard() {
     setError(null);
   };
 
+  const canProceed = () => {
+    switch (currentStep) {
+      case 0:
+        return isConnected;
+      case 1:
+        return formData.storeName.trim().length >= 2;
+      case 2:
+        const slugValidation = validation.storeSlug(formData.storeSlug);
+        return !slugValidation && slugAvailable === true;
+      case 3:
+        return true; // Icon is optional
+      default:
+        return false;
+    }
+  };
+
   const handleCreateStore = async () => {
     setIsLoading(true);
     setError(null);
@@ -157,6 +173,7 @@ export default function Onboard() {
               width={80}
               alt='SolStore_Logo' />
           </div>
+          <InfoIcon/>
 
         
         </div>
@@ -339,6 +356,16 @@ export default function Onboard() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Store Slug
                 </label>
+                <div className="mb-2">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <div className="flex items-center gap-2 text-blue-800">
+                      <Info className="w-4 h-4" />
+                      <p className="text-xs">
+                        Reserved names like "admin", "store", "explore" etc. cannot be used
+                      </p>
+                    </div>
+                  </div>
+                </div>
                 <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
                   <span className="px-3 py-3 bg-gray-400/20 text-gray-500 text-sm">
                     solstore.vercel.app/
@@ -352,16 +379,25 @@ export default function Onboard() {
                   />
                 </div>
 
-                {/* Slug availability indicator */}
+                {/* Slug validation and availability indicator */}
                 {formData.storeSlug && (
                   <div className="mt-2">
-                    {checkingSlug ? (
-                      <p className="text-sm text-gray-500">Checking availability...</p>
-                    ) : slugAvailable === true ? (
-                      <p className="text-sm text-green-600">✓ Slug is available</p>
-                    ) : slugAvailable === false ? (
-                      <p className="text-sm text-red-600">✗ Slug is already taken</p>
-                    ) : null}
+                    {(() => {
+                      const validationError = validation.storeSlug(formData.storeSlug);
+                      if (validationError) {
+                        return <p className="text-sm text-red-600">✗ {validationError}</p>;
+                      }
+                      if (checkingSlug) {
+                        return <p className="text-sm text-gray-500">Checking availability...</p>;
+                      }
+                      if (slugAvailable === true) {
+                        return <p className="text-sm text-green-600">✓ Slug is available</p>;
+                      }
+                      if (slugAvailable === false) {
+                        return <p className="text-sm text-red-600">✗ Slug is already taken</p>;
+                      }
+                      return null;
+                    })()}
                   </div>
                 )}
               </div>
@@ -493,12 +529,12 @@ export default function Onboard() {
 
             <button
               onClick={handleNext}
-              disabled={isLoading}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${ !isLoading
-                ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
-           
+              disabled={isLoading || !canProceed()}
+              className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${
+                !isLoading && canProceed()
+                  ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
             >
               {isLoading ? (
                 <>

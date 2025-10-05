@@ -14,6 +14,16 @@ export const validation = {
     if (!/^[a-z0-9-]+$/.test(slug)) return 'Store slug can only contain lowercase letters, numbers, and hyphens';
     if (slug.startsWith('-') || slug.endsWith('-')) return 'Store slug cannot start or end with a hyphen';
     if (slug.includes('--')) return 'Store slug cannot contain consecutive hyphens';
+    
+    // Check for reserved/sensitive names
+    const reservedSlugs = [
+      'store', 'stores', 'slug', 'admin', 'explore', 'features', 
+      'howitworks', 'onboard', 'my-store', 'solstore'
+    ];
+    if (reservedSlugs.includes(slug.toLowerCase())) {
+      return 'This slug name is reserved and cannot be used';
+    }
+    
     return null;
   },
 

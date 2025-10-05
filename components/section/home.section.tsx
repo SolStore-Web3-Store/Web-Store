@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react';
-import { Flame, User, LogOut, ArrowRight } from 'lucide-react';
+import { Flame, User, LogOut, ArrowRight, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useWallet } from '@/hooks/useWallet';
@@ -75,7 +75,7 @@ export default function WebPlatform() {
             {isConnected && walletAddress ? (
               <div className="flex items-center gap-3">
                 {/* Wallet Address Display */}
-                <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 rounded-lg">
+                <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 border border-gray-400 ">
                   <User className="w-4 h-4 text-gray-600" />
                   <span className="text-sm font-medium text-gray-700">
                     {formatWalletAddress(walletAddress)}
@@ -89,7 +89,7 @@ export default function WebPlatform() {
                     target='_blank'
                     className="flex gap-1 bg-indigo-600 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
                   >
-                    <ArrowRight />
+                    <ChevronRight />
                     Dashboard
                   </Link>
                 )}
