@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Wallet, Store, Link as LinkIcon, Image as ImageIcon, CheckCircle, ArrowRight, ArrowLeft, Info, AlertCircle, ChevronDown, ChevronRight, InfoIcon } from 'lucide-react';
+import { Wallet, Store, Link as LinkIcon, Image as ImageIcon, CheckCircle, ArrowRight, ArrowLeft, Info, AlertCircle, ChevronRight, InfoIcon } from 'lucide-react';
 import Link from 'next/link';
 import Stepper from '@/components/ui/stepper';
 import Image from 'next/image';
 import { useWallet } from '@/hooks/useWallet';
-import { storeApi, uploadApi, healthApi, ApiError } from '@/lib/api';
+import { storeApi, uploadApi, ApiError } from '@/lib/api';
 import { validation, formatFileSize } from '@/lib/validation';
 import { WalletConnectButton } from '@/components/wallet/wallet-connect-button';
 
@@ -34,7 +34,6 @@ export default function Onboard() {
   } | null>(null);
   const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
   const [checkingSlug, setCheckingSlug] = useState(false);
-  const [backendAvailable, setBackendAvailable] = useState<boolean | null>(null);
 
   const {
     isConnected,
@@ -43,22 +42,7 @@ export default function Onboard() {
     isWalletDetected
   } = useWallet();
 
-  // Check backend availability on mount
-  useEffect(() => {
-    const checkBackend = async () => {
-      try {
-        const response = await fetch(`${process.env.NODE_ENV === 'production' 
-          ? process.env.NEXT_PUBLIC_API_URL_PRODUCTION
-          : process.env.NEXT_PUBLIC_API_URL}/health`);
-        setBackendAvailable(response.ok);
-      } catch (error) {
-        console.error('Backend health check failed:', error);
-        setBackendAvailable(false);
-      }
-    };
-    
-    checkBackend();
-  }, []);
+
 
 
   // Check slug availability with debounce
@@ -361,7 +345,7 @@ export default function Onboard() {
                     <div className="flex items-center gap-2 text-blue-800">
                       <Info className="w-4 h-4" />
                       <p className="text-xs">
-                        Reserved names like "admin", "store", "explore" etc. cannot be used
+                        Reserved names like &quot;admin&quot;, &quot;store&quot;, &quot;explore&quot; etc. cannot be used
                       </p>
                     </div>
                   </div>
