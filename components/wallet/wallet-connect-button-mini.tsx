@@ -54,7 +54,7 @@ export function WalletConnectButtonMini({
             <AlertCircle className="w-5 h-5" />
             <div>
               <p className="font-medium">Phantom Wallet Required</p>
-              <p className="text-sm">Install Phantom wallet to connect to SolStore</p>
+              <p className="text-xs">Install Phantom wallet to connect to SolStore</p>
             </div>
           </div>
         </div>
@@ -81,7 +81,7 @@ export function WalletConnectButtonMini({
         {showInstructions && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <h4 className="font-medium text-blue-900 mb-2">How to install Phantom:</h4>
-            <ol className="list-decimal list-inside space-y-1 text-sm text-blue-800">
+            <ol className="list-decimal list-inside space-y-1 text-xs text-blue-800">
               <li>Visit <a href="https://phantom.app/" className="underline">phantom.app</a></li>
               <li>Click &quot;Add to Chrome&quot; (or your browser)</li>
               <li>Create a new wallet or import existing one</li>
@@ -101,7 +101,7 @@ export function WalletConnectButtonMini({
             <CheckCircle className="w-5 h-5" />
             <div className="flex-1">
               <p className="font-medium">Wallet Connected</p>
-              <p className="text-sm font-mono">
+              <p className="text-xs font-mono">
                 {walletAddress.slice(0, 8)}...{walletAddress.slice(-8)}
               </p>
             </div>
@@ -125,7 +125,7 @@ export function WalletConnectButtonMini({
           <div className="flex items-center gap-2 text-red-800">
             <AlertCircle className="w-5 h-5" />
             <div>
-              <p className="text-sm">{error}</p>
+              <p className="text-xs">{error}</p>
               {error.includes('cancelled') && (
                 <p className="text-xs mt-1">
                   Click &quot;Connect Wallet&quot; again and approve the connection in Phantom.

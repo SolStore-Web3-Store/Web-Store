@@ -11,10 +11,10 @@ interface StoreLayoutProps {
 // Server-side store validation
 async function validateStore(storeSlug: string) {
   try {
-    const API_BASE_URL = process.env.NODE_ENV === 'production' 
+    const API_BASE_URL = process.env.NODE_ENV === 'production'
       ? process.env.NEXT_PUBLIC_API_URL_PRODUCTION
       : process.env.NEXT_PUBLIC_API_URL;
-    
+
     const response = await fetch(`${API_BASE_URL}/stores/${storeSlug}`, {
       method: 'GET',
       headers: {
@@ -41,10 +41,10 @@ export async function generateMetadata(
   { params }: { params: Promise<{ storeSlug: string }> }
 ): Promise<Metadata> {
   const { storeSlug } = await params;
-  
+
   // Validate store exists
   const store = await validateStore(storeSlug);
-  
+
   if (!store) {
     // Store doesn't exist, return basic metadata
     return {
@@ -56,6 +56,33 @@ export async function generateMetadata(
   return {
     title: `${store.name} | SolStore`,
     description: store.description || `Shop at ${store.name} - A Web3 store powered by SolStore`,
+    icons: store.icon ? {
+      icon: [
+        {
+          url: store.icon,
+          sizes: '640x640',
+          type: 'image/png',
+        },
+        {
+          url: store.icon,
+          sizes: '32x32',
+          type: 'image/png',
+        },
+        {
+          url: store.icon,
+          sizes: '16x16',
+          type: 'image/png',
+        }
+      ],
+      shortcut: store.icon,
+      apple: [
+        {
+          url: store.icon,
+          sizes: '180x180',
+          type: 'image/png',
+        }
+      ],
+    } : undefined,
     openGraph: {
       title: store.name,
       description: store.description || `Shop at ${store.name}`,
@@ -72,10 +99,10 @@ export async function generateMetadata(
 
 const StoreLayout = async ({ children, params }: StoreLayoutProps) => {
   const { storeSlug } = await params;
-  
+
   // Validate store exists on server side
   const store = await validateStore(storeSlug);
-  
+
   if (!store) {
     // Store doesn't exist, redirect to home page
     redirect('/');

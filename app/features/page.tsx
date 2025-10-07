@@ -59,7 +59,7 @@ export default function FeaturesPage() {
   return (
     <div className="h-full w-full bg-gray-50" suppressHydrationWarning>
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-5 px-4 text-center text-sm font-medium">
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-5 px-4 text-center text-xs font-medium">
         <span className="inline-flex items-center gap-2">
           <Flame className="w-4 h-4 text-yellow-400" />
           <span>
@@ -98,7 +98,7 @@ export default function FeaturesPage() {
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 rounded-lg">
                   <User className="w-4 h-4 text-gray-600" />
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-xs font-medium text-gray-700">
                     {formatWalletAddress(walletAddress)}
                   </span>
                 </div>
@@ -164,7 +164,7 @@ export default function FeaturesPage() {
               <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4">
                 <feature.icon className="w-6 h-6 text-indigo-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
+              <h3 className="text-sm font-semibold text-gray-900 mb-3">{feature.title}</h3>
               <p className="text-gray-600 leading-relaxed">{feature.description}</p>
             </div>
           ))}

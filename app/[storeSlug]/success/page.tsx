@@ -1,12 +1,29 @@
 'use client'
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { CheckCircle, ArrowLeft, Mail } from 'lucide-react';
+import { CheckCircle, ArrowLeft, Mail, ExternalLink, Copy } from 'lucide-react';
+import { storeApi } from '@/lib/api';
 
 interface OrderData {
+    orderId: string;
     orderNumber: string;
-    status: string;
-    message: string;
+    status: "pending" | "completed" | "failed";
+    amount: string;
+    currency: string;
+    paymentURL: string;
+    expiresAt: string;
+    transactionSignature?: string | null;
+    items: Array<{
+        product: {
+            id: string;
+            name: string;
+            price: string;
+        };
+        quantity: number;
+        price: string;
+    }>;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export default function PaymentSuccessPage() {
@@ -23,21 +40,38 @@ export default function PaymentSuccessPage() {
     const orderNumber = searchParams.get('orderNumber');
 
     const loadOrderData = useCallback(async () => {
-        try {
-            // In a real implementation, you'd fetch the order details
-            // For now, we'll show a generic success message
+        if (!orderId) {
+            // If no orderId, show generic success
             setOrderData({
+                orderId: 'unknown',
                 orderNumber: orderNumber || '#ORD-' + Date.now(),
                 status: 'completed',
-                message: 'Your order has been successfully processed!'
+                amount: '0.00',
+                currency: 'SOL',
+                paymentURL: '',
+                expiresAt: new Date().toISOString(),
+                items: [],
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
             });
+            setLoading(false);
+            return;
+        }
+
+        try {
+            // First get store data to get store ID
+            const store = await storeApi.getStoreBySlug(storeSlug);
+            
+            // Then get order status
+            const orderStatus = await storeApi.getCheckoutStatus(store.id, orderId);
+            setOrderData(orderStatus);
         } catch (err) {
             console.error('Failed to load order data:', err);
             setError('Failed to load order information');
         } finally {
             setLoading(false);
         }
-    }, [orderNumber]);
+    }, [orderId, orderNumber, storeSlug]);
 
     useEffect(() => {
         if (orderId) {
@@ -67,7 +101,7 @@ export default function PaymentSuccessPage() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
-                    <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Order</h2>
+                    <h2 className="text-sm font-semibold text-gray-900 mb-2">Error Loading Order</h2>
                     <p className="text-gray-600 mb-4">{error}</p>
                     <button
                         onClick={() => router.push(`/${storeSlug}`)}
@@ -90,7 +124,7 @@ export default function PaymentSuccessPage() {
                         className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
                     >
                         <ArrowLeft className="w-5 h-5" />
-                        <span className="text-sm">Back to Store</span>
+                        <span className="text-xs">Back to Store</span>
                     </button>
                 </header>
 
@@ -107,7 +141,7 @@ export default function PaymentSuccessPage() {
                     {/* Order Details */}
                     <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
                         <h3 className="font-semibold text-gray-900 mb-3">Order Details</h3>
-                        <div className="space-y-2 text-sm">
+                        <div className="space-y-2 text-xs">
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Order Number:</span>
                                 <span className="font-medium text-gray-900">
@@ -121,13 +155,61 @@ export default function PaymentSuccessPage() {
                                 </span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-gray-600">Date:</span>
+                                <span className="text-gray-600">Amount:</span>
                                 <span className="font-medium text-gray-900">
-                                    {new Date().toLocaleDateString()}
+                                    {orderData?.amount} {orderData?.currency}
                                 </span>
                             </div>
+                            <div className="flex justify-between">
+                                <span className="text-gray-600">Date:</span>
+                                <span className="font-medium text-gray-900">
+                                    {orderData?.createdAt ? new Date(orderData.createdAt).toLocaleDateString() : new Date().toLocaleDateString()}
+                                </span>
+                            </div>
+                            {orderData?.transactionSignature && (
+                                <div className="flex justify-between items-center">
+                                    <span className="text-gray-600">Transaction:</span>
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-mono text-xs text-gray-900">
+                                            {orderData.transactionSignature.slice(0, 8)}...{orderData.transactionSignature.slice(-8)}
+                                        </span>
+                                        <button
+                                            onClick={() => navigator.clipboard.writeText(orderData.transactionSignature!)}
+                                            className="p-1 hover:bg-gray-200 rounded"
+                                        >
+                                            <Copy className="w-3 h-3 text-gray-500" />
+                                        </button>
+                                        <button
+                                            onClick={() => window.open(`https://explorer.solana.com/tx/${orderData.transactionSignature}`, '_blank')}
+                                            className="p-1 hover:bg-gray-200 rounded"
+                                        >
+                                            <ExternalLink className="w-3 h-3 text-gray-500" />
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
+
+                    {/* Order Items */}
+                    {orderData?.items && orderData.items.length > 0 && (
+                        <div className="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+                            <h3 className="font-semibold text-gray-900 mb-3">Items Purchased</h3>
+                            <div className="space-y-3">
+                                {orderData.items.map((item, index) => (
+                                    <div key={index} className="flex justify-between items-center">
+                                        <div>
+                                            <div className="text-sm font-medium text-gray-900">{item.product.name}</div>
+                                            <div className="text-xs text-gray-600">Quantity: {item.quantity}</div>
+                                        </div>
+                                        <div className="text-sm font-medium text-gray-900">
+                                            {item.price} {orderData.currency}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Next Steps */}
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-left">
@@ -135,7 +217,7 @@ export default function PaymentSuccessPage() {
                             <Mail className="w-4 h-4" />
                             What&apos;s Next?
                         </h3>
-                        <ul className="text-sm text-blue-800 space-y-2">
+                        <ul className="text-xs text-blue-800 space-y-2">
                             <li>• You&apos;ll receive a confirmation email shortly</li>
                             <li>• Download links will be sent to your email</li>
                             <li>• Keep your order number for future reference</li>

@@ -91,7 +91,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span className="text-sm text-green-800 font-medium">
+                  <span className="text-xs text-green-800 font-medium">
                     Item added to cart!
                   </span>
                 </div>
@@ -117,7 +117,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   <ShoppingCart className="w-10 h-10 text-gray-400" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">Your cart is empty</h3>
-                <p className="text-gray-500 text-sm mb-4">
+                <p className="text-gray-500 text-xs mb-4">
                   Browse products and add them to your cart to get started!
                 </p>
                 <button
@@ -146,7 +146,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
             <div className="border-t border-gray-200 bg-gray-50 p-4 space-y-4">
               {/* Summary */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm text-gray-600">
+                <div className="flex items-center justify-between text-xs text-gray-600">
                   <span>Subtotal ({storeItemCount} {storeItemCount === 1 ? 'item' : 'items'}):</span>
                   <span>{storeTotal.toFixed(2)} {storeItems[0]?.currency || 'SOL'}</span>
                 </div>
@@ -172,7 +172,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       clearCart();
                     }
                   }}
-                  className="w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors text-sm"
+                  className="w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors text-xs"
                 >
                   Clear Cart
                 </button>
@@ -216,13 +216,13 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, onQuantityChange, onR
 
         {/* Product Info */}
         <div className="flex-1 min-w-0">
-          <h4 className="text-sm font-medium text-gray-900 mb-1">
+          <h4 className="text-xs font-medium text-gray-900 mb-1">
             {item.name}
           </h4>
-          <p className="text-sm text-gray-600 mb-2">
+          <p className="text-xs text-gray-600 mb-2">
             {item.price} {item.currency} each
           </p>
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-xs font-semibold text-gray-900">
             Total: {itemTotal} {item.currency}
           </p>
         </div>
@@ -239,7 +239,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, onQuantityChange, onR
       
       {/* Quantity Controls */}
       <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-600">Quantity:</span>
+        <span className="text-xs text-gray-600">Quantity:</span>
         <div className="flex items-center gap-3 bg-white border border-gray-300 rounded-lg px-3 py-2">
           <button
             onClick={() => onQuantityChange(item.id, item.quantity - 1)}
@@ -258,7 +258,7 @@ const CartItemCard: React.FC<CartItemCardProps> = ({ item, onQuantityChange, onR
                 onQuantityChange(item.id, newQuantity);
               }
             }}
-            className="w-12 text-center text-sm font-medium text-gray-900 bg-transparent border-none outline-none"
+            className="w-12 text-center text-xs font-medium text-gray-900 bg-transparent border-none outline-none"
             min="1"
           />
           

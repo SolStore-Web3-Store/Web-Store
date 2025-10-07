@@ -47,7 +47,7 @@ export default function Toast({ message, type, onClose, duration = 5000 }: Toast
     >
       <div className="flex items-start gap-3">
         <Icon className={`w-5 h-5 mt-0.5 ${textColor}`} />
-        <p className={`flex-1 text-sm ${textColor}`}>{message}</p>
+        <p className={`flex-1 text-xs ${textColor}`}>{message}</p>
         <button
           onClick={() => {
             setIsVisible(false);

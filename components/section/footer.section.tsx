@@ -11,7 +11,7 @@ export default function Footer() {
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight">
            Start your web3 store today
           </h1>
-          <p className="text-lg md:text-xl mb-8 text-white/90 max-w-2xl mx-auto">
+          <p className="text-lg md:text-sm mb-8 text-white/90 max-w-2xl mx-auto">
             A powerful, simple and free platform
             <br />
             to create, manage and sell digital products <span className="underline underline-offset-4">everyday.</span>
@@ -101,7 +101,7 @@ export default function Footer() {
 
           {/* Bottom Bar */}
           <div className="pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-xs text-gray-600">
               © 2025 SolStore.
             </p>
 

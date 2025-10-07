@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
       "sdmntprwestus3.oaiusercontent.com",
       "utfs.io", // UploadThing CDN for store icons and banners
       "images.unsplash.com",
+      "api.phantom.app"
     ],
   },
 };

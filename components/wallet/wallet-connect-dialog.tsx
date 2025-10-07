@@ -58,7 +58,7 @@ export function WalletConnectDialog({ isOpen, onClose, onSuccess }: WalletConnec
 
         {isWalletDetected && !isConnected && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div className="text-blue-800 text-sm">
+            <div className="text-blue-800 text-xs">
               <p className="font-medium mb-1">How to connect:</p>
               <ol className="list-decimal list-inside space-y-1 text-xs">
                 <li>Click &quot;Connect Wallet&quot; below</li>
@@ -73,7 +73,7 @@ export function WalletConnectDialog({ isOpen, onClose, onSuccess }: WalletConnec
           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
             <div className="flex items-center gap-2 text-yellow-800">
               <AlertCircle className="w-5 h-5" />
-              <p className="text-sm">
+              <p className="text-xs">
                 Phantom wallet not detected.
                 <a
                   href="https://phantom.app/"
@@ -93,7 +93,7 @@ export function WalletConnectDialog({ isOpen, onClose, onSuccess }: WalletConnec
             <div className="flex items-center gap-2 text-red-800">
               <AlertCircle className="w-5 h-5" />
               <div className="flex-1">
-                <p className="text-sm">{walletError || error}</p>
+                <p className="text-xs">{walletError || error}</p>
                 {(walletError?.includes('cancelled') || walletError?.includes('rejected')) && (
                   <p className="text-xs mt-1 text-red-600">
                     Click &quot;Connect Wallet&quot; again and approve the connection in your Phantom wallet.
@@ -118,7 +118,7 @@ export function WalletConnectDialog({ isOpen, onClose, onSuccess }: WalletConnec
 
         {isConnected && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <div className="text-green-800 text-sm">
+            <div className="text-green-800 text-xs">
               <p className="font-medium mb-1">✅ Connected successfully!</p>
               <p className="text-xs">Your wallet is connected and authenticated.</p>
             </div>

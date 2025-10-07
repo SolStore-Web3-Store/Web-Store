@@ -298,7 +298,7 @@ function StoreDashboardContent() {
       <div className="flex h-screen bg-gray-50 items-center justify-center">
         <div className="text-center">
           <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Authentication Required</h2>
+          <h2 className="text-sm font-semibold text-gray-900 mb-2">Authentication Required</h2>
           <p className="text-gray-600">Please connect your wallet to access the store dashboard.</p>
         </div>
       </div>
@@ -310,7 +310,7 @@ function StoreDashboardContent() {
       <div className="flex h-screen bg-gray-50 items-center justify-center">
         <div className="text-center">
           <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">No Store Selected</h2>
+          <h2 className="text-sm font-semibold text-gray-900 mb-2">No Store Selected</h2>
           <p className="text-gray-600 mb-4">Please select a store from the sidebar to view its dashboard.</p>
           <Link
             href="/admin"
@@ -352,7 +352,7 @@ function StoreDashboardContent() {
               <p className="text-gray-600">
                 Welcome back! Here&apos;s what&apos;s happening with your store.
                 {analytics && !loading && !error && (
-                  <span className="ml-2 text-green-600 text-sm">
+                  <span className="ml-2 text-green-600 text-xs">
                     ✓ Data updated
                   </span>
                 )}
@@ -360,7 +360,7 @@ function StoreDashboardContent() {
               {error && (
                 <div className="mt-2 p-3 bg-red-50 border border-red-200 rounded flex items-start gap-2">
                   <AlertCircle className="w-4 h-4 text-red-600 mt-0.5 flex-shrink-0" />
-                  <div className="text-sm text-red-700">
+                  <div className="text-xs text-red-700">
                     <p className="font-medium">Error loading analytics:</p>
                     <p>{error}</p>
                     <button
@@ -402,7 +402,7 @@ function StoreDashboardContent() {
           {refreshing && (
             <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-2">
               <TrendingUp className="w-4 h-4 animate-spin text-blue-600" />
-              <span className="text-sm text-blue-700">Refreshing analytics data...</span>
+              <span className="text-xs text-blue-700">Refreshing analytics data...</span>
             </div>
           )}
 
@@ -413,13 +413,13 @@ function StoreDashboardContent() {
                 <div className="bg-white rounded-lg p-6 border border-gray-200">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">Total Revenue</p>
+                      <p className="text-xs text-gray-600">Total Revenue</p>
                       <p className="text-2xl font-bold text-gray-900">
                         {analytics.revenue?.total || '0'} {analytics.revenue?.currency || 'SOL'}
                       </p>
                       <div className="flex items-center gap-1 mt-1">
                         {analytics.revenue?.change && getTrendIcon(analytics.revenue.change)}
-                        <span className={`text-sm ${analytics.revenue?.change ? getTrendColor(analytics.revenue.change) : 'text-gray-600'}`}>
+                        <span className={`text-xs ${analytics.revenue?.change ? getTrendColor(analytics.revenue.change) : 'text-gray-600'}`}>
                           {analytics.revenue?.change || 'No change'}
                         </span>
                       </div>
@@ -431,11 +431,11 @@ function StoreDashboardContent() {
                 <div className="bg-white rounded-lg p-6 border border-gray-200">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">Total Orders</p>
+                      <p className="text-xs text-gray-600">Total Orders</p>
                       <p className="text-2xl font-bold text-gray-900">{analytics.orders?.total || 0}</p>
                       <div className="flex items-center gap-1 mt-1">
                         {analytics.orders?.change && getTrendIcon(analytics.orders.change)}
-                        <span className={`text-sm ${analytics.orders?.change ? getTrendColor(analytics.orders.change) : 'text-gray-600'}`}>
+                        <span className={`text-xs ${analytics.orders?.change ? getTrendColor(analytics.orders.change) : 'text-gray-600'}`}>
                           {analytics.orders?.change || 'No change'}
                         </span>
                       </div>
@@ -447,10 +447,10 @@ function StoreDashboardContent() {
                 <div className="bg-white rounded-lg p-6 border border-gray-200">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">Products</p>
+                      <p className="text-xs text-gray-600">Products</p>
                       <p className="text-2xl font-bold text-gray-900">{analytics.products?.total || 0}</p>
                       <div className="flex items-center gap-1 mt-1">
-                        <span className="text-sm text-gray-600">
+                        <span className="text-xs text-gray-600">
                           {analytics.products?.active || 0} active, {analytics.products?.draft || 0} draft
                         </span>
                       </div>
@@ -462,11 +462,11 @@ function StoreDashboardContent() {
                 <div className="bg-white rounded-lg p-6 border border-gray-200">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-600">Customers</p>
+                      <p className="text-xs text-gray-600">Customers</p>
                       <p className="text-2xl font-bold text-gray-900">{analytics.customers?.total || 0}</p>
                       <div className="flex items-center gap-1 mt-1">
                         {analytics.customers?.change && getTrendIcon(analytics.customers.change)}
-                        <span className={`text-sm ${analytics.customers?.change ? getTrendColor(analytics.customers.change) : 'text-gray-600'}`}>
+                        <span className={`text-xs ${analytics.customers?.change ? getTrendColor(analytics.customers.change) : 'text-gray-600'}`}>
                           {analytics.customers?.change || 'No change'}
                         </span>
                       </div>
@@ -483,7 +483,7 @@ function StoreDashboardContent() {
               <p className="text-gray-600 mb-4">Unable to load store analytics at this time.</p>
 
               {error && (
-                <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded p-3 max-w-md mx-auto mb-4">
+                <div className="text-xs text-red-600 bg-red-50 border border-red-200 rounded p-3 max-w-md mx-auto mb-4">
                   <strong>Error:</strong> {error}
                 </div>
               )}
@@ -499,7 +499,7 @@ function StoreDashboardContent() {
                     <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
                     <Link
                       href={`/admin/store/orders?store=${currentStore}`}
-                      className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+                      className="text-indigo-600 hover:text-indigo-700 text-xs font-medium"
                     >
                       View All
                     </Link>
@@ -517,13 +517,13 @@ function StoreDashboardContent() {
                                 {order.status || 'pending'}
                               </span>
                             </div>
-                            <p className="text-sm text-gray-600" title={order.customer}>
+                            <p className="text-xs text-gray-600" title={order.customer}>
                               {order.customer ?
                                 `${order.customer.slice(0, 8)}...${order.customer.slice(-4)}` :
                                 'Unknown wallet'
                               }
                             </p>
-                            <p className="text-sm text-gray-500">{order.product || 'Unknown product'}</p>
+                            <p className="text-xs text-gray-500">{order.product || 'Unknown product'}</p>
                           </div>
                           <div className="text-right ml-4">
                             <p className="font-semibold text-gray-900">
@@ -537,7 +537,7 @@ function StoreDashboardContent() {
                     <div className="text-center py-8">
                       <ShoppingCart className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                       <p className="text-gray-600 mb-2">No recent orders</p>
-                      <p className="text-sm text-gray-500">Orders will appear here once customers start purchasing</p>
+                      <p className="text-xs text-gray-500">Orders will appear here once customers start purchasing</p>
                     </div>
                   )}
                 </div>
@@ -550,7 +550,7 @@ function StoreDashboardContent() {
                     <h3 className="text-lg font-semibold text-gray-900">Top Products</h3>
                     <Link
                       href={`/admin/store/products?store=${currentStore}`}
-                      className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+                      className="text-indigo-600 hover:text-indigo-700 text-xs font-medium"
                     >
                       View All
                     </Link>
@@ -563,11 +563,11 @@ function StoreDashboardContent() {
                         <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
-                              <span className="text-sm font-bold text-indigo-600">#{index + 1}</span>
+                              <span className="text-xs font-bold text-indigo-600">#{index + 1}</span>
                             </div>
                             <div>
                               <p className="font-medium text-gray-900">{product.name || 'Unknown product'}</p>
-                              <p className="text-sm text-gray-500">{product.sales || 0} sales</p>
+                              <p className="text-xs text-gray-500">{product.sales || 0} sales</p>
                             </div>
                           </div>
                           <div className="text-right">
@@ -580,10 +580,10 @@ function StoreDashboardContent() {
                     <div className="text-center py-8">
                       <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                       <p className="text-gray-600 mb-2">No products yet</p>
-                      <p className="text-sm text-gray-500 mb-4">Create products to start selling and see analytics</p>
+                      <p className="text-xs text-gray-500 mb-4">Create products to start selling and see analytics</p>
                       <Link
                         href={`/admin/store/products?store=${currentStore}`}
-                        className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+                        className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 text-xs font-medium"
                       >
                         <Package className="w-4 h-4" />
                         Add your first product
@@ -603,7 +603,7 @@ function StoreDashboardContent() {
                 <Package className="w-6 h-6 text-indigo-600" />
                 <div className="text-left">
                   <p className="font-medium text-gray-900">Add Product</p>
-                  <p className="text-sm text-gray-500">Create a new product listing</p>
+                  <p className="text-xs text-gray-500">Create a new product listing</p>
                 </div>
               </button>
 
@@ -611,7 +611,7 @@ function StoreDashboardContent() {
                 <ShoppingCart className="w-6 h-6 text-green-600" />
                 <div className="text-left">
                   <p className="font-medium text-gray-900">Process Orders</p>
-                  <p className="text-sm text-gray-500">Manage pending orders</p>
+                  <p className="text-xs text-gray-500">Manage pending orders</p>
                 </div>
               </button>
 
@@ -619,7 +619,7 @@ function StoreDashboardContent() {
                 <TrendingUp className="w-6 h-6 text-purple-600" />
                 <div className="text-left">
                   <p className="font-medium text-gray-900">View Analytics</p>
-                  <p className="text-sm text-gray-500">Check store performance</p>
+                  <p className="text-xs text-gray-500">Check store performance</p>
                 </div>
               </button>
             </div>

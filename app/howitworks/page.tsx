@@ -53,7 +53,7 @@ export default function HowItWorksPage() {
   return (
     <div className="h-full w-full bg-gray-50" suppressHydrationWarning>
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-5 px-4 text-center text-sm font-medium">
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-5 px-4 text-center text-xs font-medium">
         <span className="inline-flex items-center gap-2">
           <Flame className="w-4 h-4 text-yellow-400" />
           <span>
@@ -92,7 +92,7 @@ export default function HowItWorksPage() {
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 rounded-lg">
                   <User className="w-4 h-4 text-gray-600" />
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-xs font-medium text-gray-700">
                     {formatWalletAddress(walletAddress)}
                   </span>
                 </div>
@@ -202,7 +202,7 @@ export default function HowItWorksPage() {
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Monthly Fees</h3>
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">No Monthly Fees</h3>
               <p className="text-gray-600">Pay only when you sell. No hidden costs or subscription fees.</p>
             </div>
             
@@ -210,7 +210,7 @@ export default function HowItWorksPage() {
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Instant Payments</h3>
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">Instant Payments</h3>
               <p className="text-gray-600">Receive payments directly to your wallet in seconds.</p>
             </div>
             
@@ -218,7 +218,7 @@ export default function HowItWorksPage() {
               <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CheckCircle className="w-8 h-8 text-purple-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Full Ownership</h3>
+              <h3 className="text-sm font-semibold text-gray-900 mb-2">Full Ownership</h3>
               <p className="text-gray-600">You own your store, data, and customer relationships.</p>
             </div>
           </div>

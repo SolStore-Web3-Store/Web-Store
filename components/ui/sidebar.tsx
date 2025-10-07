@@ -119,7 +119,7 @@ export default function Sidebar({ currentStore }: SidebarProps) {
         {loading ? (
           <div className="flex items-center justify-center p-3">
             <div className="w-5 h-5 border-2 border-gray-300 border-t-indigo-600 rounded-full animate-spin" />
-            {!isCollapsed && <span className="ml-2 text-sm text-gray-600">Loading stores...</span>}
+            {!isCollapsed && <span className="ml-2 text-xs text-gray-600">Loading stores...</span>}
           </div>
         ) : !isConnected ? (
           <div className={`p-3 bg-yellow-50 border border-yellow-200  ${isCollapsed ? 'flex justify-center' : ''}`}>
@@ -133,7 +133,7 @@ export default function Sidebar({ currentStore }: SidebarProps) {
             ) : (
               <div className="flex items-center gap-2 text-yellow-800">
                 <AlertCircle className="w-4 h-4" />
-                <span className="text-sm">Connect wallet to access stores</span>
+                <span className="text-xs">Connect wallet to access stores</span>
               </div>
             )}
           </div>
@@ -149,7 +149,7 @@ export default function Sidebar({ currentStore }: SidebarProps) {
             ) : (
               <>
                 <Store className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                <p className="text-sm text-gray-600 mb-3">No stores found</p>
+                <p className="text-xs text-gray-600 mb-3">No stores found</p>
                 <Link
                   href="/onboard"
                   className="inline-flex items-center gap-1 text-xs bg-indigo-600 text-white px-3 py-1.5  hover:bg-indigo-700 transition-colors"
@@ -170,14 +170,14 @@ export default function Sidebar({ currentStore }: SidebarProps) {
                 <div className="relative">
                   {getStoreIcon(selectedStore)}
                   {isCollapsed && (
-                    <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-sm px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 truncate">
+                    <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50 truncate">
                       {selectedStore.name}
                     </div>
                   )}
                 </div>
                 {!isCollapsed && (
                   <div className="text-left ml-3">
-                    <p className="font-medium text-gray-900 text-sm truncate">
+                    <p className="font-medium text-gray-900 text-xs truncate">
                       {selectedStore.name}
                     </p>
                     <p className="text-xs text-gray-500">Current Store</p>
@@ -212,7 +212,7 @@ export default function Sidebar({ currentStore }: SidebarProps) {
                   >
                     {getStoreIcon(store)}
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900 text-sm">{store.name}</p>
+                      <p className="font-medium text-gray-900 text-xs">{store.name}</p>
                       <p className="text-xs text-gray-500">/{store.slug}</p>
                     </div>
                     {store.status !== 'active' && (
@@ -230,7 +230,7 @@ export default function Sidebar({ currentStore }: SidebarProps) {
                     onClick={() => setIsStoreDropdownOpen(false)}
                   >
                     <Store className="w-4 h-4" />
-                    <span className="text-sm font-medium">All Stores</span>
+                    <span className="text-xs font-medium">All Stores</span>
                   </Link>
 
                   <Link
@@ -239,7 +239,7 @@ export default function Sidebar({ currentStore }: SidebarProps) {
                     onClick={() => setIsStoreDropdownOpen(false)}
                   >
                     <Plus className="w-4 h-4" />
-                    <span className="text-sm font-medium">Create New Store</span>
+                    <span className="text-xs font-medium">Create New Store</span>
                   </Link>
                 </div>
               </div>
@@ -328,7 +328,7 @@ export default function Sidebar({ currentStore }: SidebarProps) {
       <div className={`lg:hidden fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}>
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <span className="text-xl font-bold text-gray-900">SolStore</span>
+          <span className="text-sm font-bold text-gray-900">SolStore</span>
           <button
             onClick={() => setIsMobileOpen(false)}
             className="p-1  hover:bg-gray-100"

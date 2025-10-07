@@ -56,7 +56,7 @@ export default function ExplorePage() {
   return (
     <div className="h-full w-full bg-gray-50 text-black"  suppressHydrationWarning>
       {/* Top Banner */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-5 px-4 text-center text-sm font-medium">
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-5 px-4 text-center text-xs font-medium">
         <span className="inline-flex items-center gap-2">
           <Flame className="w-4 h-4 text-yellow-400" />
           <span>
@@ -95,7 +95,7 @@ export default function ExplorePage() {
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 rounded-lg">
                   <User className="w-4 h-4 text-gray-600" />
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-xs font-medium text-gray-700">
                     {formatWalletAddress(walletAddress)}
                   </span>
                 </div>
@@ -184,11 +184,11 @@ export default function ExplorePage() {
               </div>
               <div className="p-6">
                 <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-xl font-semibold text-gray-900">{store.name}</h3>
+                  <h3 className="text-sm font-semibold text-gray-900">{store.name}</h3>
                   <ExternalLink className="w-5 h-5 text-gray-400" />
                 </div>
                 <p className="text-gray-600 mb-4">{store.description}</p>
-                <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
                   <span className="bg-gray-100 px-2 py-1 rounded">{store.category}</span>
                   <div className="flex items-center gap-1">
                     <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
@@ -196,7 +196,7 @@ export default function ExplorePage() {
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">{store.products} products</span>
+                  <span className="text-xs text-gray-500">{store.products} products</span>
                   <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors">
                     Visit Store
                   </button>

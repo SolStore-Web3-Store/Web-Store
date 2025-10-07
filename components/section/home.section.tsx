@@ -30,7 +30,7 @@ export default function WebPlatform() {
       {/* Top Banner */}
 
 
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-5 px-4 text-center text-sm font-medium">
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-5 px-4 text-center text-xs font-medium">
         <span className="inline-flex items-center gap-2">
           <Flame className="w-4 h-4 text-yellow-400" />
           <span>
@@ -77,7 +77,7 @@ export default function WebPlatform() {
                 {/* Wallet Address Display */}
                 <div className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 border border-gray-400 ">
                   <User className="w-4 h-4 text-gray-600" />
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-xs font-medium text-gray-700">
                     {formatWalletAddress(walletAddress)}
                   </span>
                 </div>
@@ -141,7 +141,7 @@ export default function WebPlatform() {
               Web3 ecommerce for sellers and creators
             </h1>
 
-            <p className="text-lg  lg:text-sm text-gray-600 leading-relaxed">
+            <p className="text-lg  lg:text-xs text-gray-600 leading-relaxed">
               SolStore is a secured and open-source ecommerce platform for web3 sellers , creators and developers to create, manage and sell digital products powered by blockchain technology.
             </p>
 
@@ -169,7 +169,7 @@ export default function WebPlatform() {
 
             {/* Blockchain Tags */}
             <div className="flex items-center gap-3">
-              <a href='https://earn.superteam.fun/' target='_blank' className="inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 border-purple-400 text-purple-600 font-bold text-sm bg-white">
+              <a href='https://earn.superteam.fun/' target='_blank' className="inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 border-purple-400 text-purple-600 font-bold text-xs bg-white">
                 <span className="text-lg"><Image src={'https://res.cloudinary.com/dgvnuwspr/image/upload/c_scale,w_128,h_128,f_auto/earn-sponsors/cfwlwsxdfxawnpw9jad8.jpg'} className='rounded-md' width={30} height={30} alt='superteam_logo' /></span>
                 SUPERTEAM NIGERIA
               </a>

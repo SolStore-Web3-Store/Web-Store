@@ -98,7 +98,7 @@ export default function Features() {
               {/* SEO Badge */}
               <div className="absolute -right-4 -top-4">
                 <div className="bg-yellow-200 border-4 border-gray-900 rounded-full w-24 h-24 flex items-center justify-center transform rotate-12">
-                  <span className="text-sm font-bold">SEO</span>
+                  <span className="text-xs font-bold">SEO</span>
                 </div>
                 <div className="absolute top-0 left-0 w-3 h-3 bg-yellow-300 rounded-full -translate-x-2 -translate-y-2"></div>
               </div>

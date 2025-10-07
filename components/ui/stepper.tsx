@@ -27,7 +27,7 @@ export default function Stepper({ steps, currentStep }: StepperProps) {
                 {index < currentStep ? (
                   <Check className="w-5 h-5" />
                 ) : (
-                  <span className="text-sm font-medium">{index + 1}</span>
+                  <span className="text-xs font-medium">{index + 1}</span>
                 )}
               </div>
               <span

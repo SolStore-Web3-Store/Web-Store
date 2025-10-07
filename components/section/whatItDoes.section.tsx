@@ -57,7 +57,7 @@ export default function WhatItDoes() {
                       <input 
                         type="text" 
                         placeholder="Drop your cover image here"
-                        className="w-full text-sm text-gray-400 bg-transparent outline-none"
+                        className="w-full text-xs text-gray-400 bg-transparent outline-none"
                         readOnly
                       />
                     </div>
@@ -75,7 +75,7 @@ export default function WhatItDoes() {
 
                   {/* Sidebar Menu */}
                   <div className="absolute top-16 right-0 bg-white rounded-l-xl  border border-gray-200 p-3 w-52">
-                    <div className="space-y-2 text-sm">
+                    <div className="space-y-2 text-xs">
                       <div className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
                         <div className="w-5 h-5 bg-gray-200 rounded flex items-center justify-center text-xs"></div>
                         <div>
@@ -119,7 +119,7 @@ export default function WhatItDoes() {
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-6 leading-tight">
                 Everything you need to create and manage your store.
               </h1>
-              <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
+              <p className="text-lg md:text-sm text-gray-600 mb-8 leading-relaxed">
                 We give you all the tools you need to build a solid foundation, understand your customers and sell your products.
                </p>
               
@@ -226,7 +226,7 @@ export default function WhatItDoes() {
               <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-6 leading-tight">
                 Join a thriving community of creators and entrepreneurs.
               </h2>
-              <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
+              <p className="text-lg md:text-sm text-gray-600 mb-8 leading-relaxed">
                 Connect with like-minded individuals, share your journey, and get inspired to take your store to the next level.
                   </p>
               

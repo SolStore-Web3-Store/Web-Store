@@ -43,7 +43,7 @@ interface Order {
   product: {
     id: string;
     name: string;
-  };
+  } | null;
   amount: string; // Changed from totalAmount to match API response
   currency: string;
   status: string;
@@ -161,7 +161,7 @@ function OrdersContent() {
       <div className="flex h-screen bg-gray-50 items-center justify-center">
         <div className="text-center">
           <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Authentication Required</h2>
+          <h2 className="text-sm font-semibold text-gray-900 mb-2">Authentication Required</h2>
           <p className="text-gray-600">Please connect your wallet to access orders.</p>
         </div>
       </div>
@@ -173,7 +173,7 @@ function OrdersContent() {
       <div className="flex h-screen bg-gray-50 items-center justify-center">
         <div className="text-center">
           <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">No Store Selected</h2>
+          <h2 className="text-sm font-semibold text-gray-900 mb-2">No Store Selected</h2>
           <p className="text-gray-600">Please select a store to view orders.</p>
         </div>
       </div>
@@ -207,7 +207,7 @@ function OrdersContent() {
               {error && (
                 <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-red-600" />
-                  <span className="text-sm text-red-700">{error}</span>
+                  <span className="text-xs text-red-700">{error}</span>
                 </div>
               )}
             </div>
@@ -275,11 +275,11 @@ function OrdersContent() {
                       return (
                         <tr key={order.id} className="hover:bg-gray-50">
                           <td className="py-4 px-4">
-                            <div className="font-medium text-gray-900 text-sm">{order.orderId}</div>
+                            <div className="font-medium text-gray-900 text-xs">{order.orderId}</div>
                             <div className="text-xs text-gray-500">ID: {order.id.slice(0, 8)}...</div>
                           </td>
                           <td className="py-4 px-4">
-                            <div className="font-medium text-gray-900 text-sm break-all">
+                            <div className="font-medium text-gray-900 text-xs break-all">
                               {order.customer.wallet.slice(0, 8)}...{order.customer.wallet.slice(-4)}
                             </div>
                             {order.customer.email && (
@@ -287,11 +287,15 @@ function OrdersContent() {
                             )}
                           </td>
                           <td className="py-4 px-4">
-                            <div className="font-medium text-gray-900 text-sm">{order.product.name}</div>
-                            <div className="text-xs text-gray-500">ID: {order.product.id.slice(0, 8)}...</div>
+                            <div className="font-medium text-gray-900 text-xs">
+                              {order.product?.name || 'Unknown Product'}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              ID: {order.product?.id ? order.product.id.slice(0, 8) + '...' : 'N/A'}
+                            </div>
                           </td>
                           <td className="py-4 px-4">
-                            <div className="font-semibold text-gray-900 text-sm">
+                            <div className="font-semibold text-gray-900 text-xs">
                               {order.amount} {order.currency}
                             </div>
                           </td>
@@ -372,7 +376,7 @@ function OrdersContent() {
           {/* Pagination */}
           {orders && orders.pagination.totalPages > 1 && (
             <div className="flex items-center justify-between mt-6">
-              <div className="text-sm text-gray-700">
+              <div className="text-xs text-gray-700">
                 Showing {orders.orders.length} of {orders.pagination.total} orders
               </div>
               <div className="flex items-center gap-2">
@@ -384,7 +388,7 @@ function OrdersContent() {
                   Previous
                 </button>
                 
-                <span className="px-4 py-2 text-sm text-gray-600">
+                <span className="px-4 py-2 text-xs text-gray-600">
                   Page {currentPage} of {orders.pagination.totalPages}
                 </span>
                 
@@ -400,7 +404,7 @@ function OrdersContent() {
           )}
           
           {orders && orders.orders.length === 0 && (
-            <div className="text-center text-sm text-gray-500 mt-6">
+            <div className="text-center text-xs text-gray-500 mt-6">
               No orders match your current filters.
             </div>
           )}

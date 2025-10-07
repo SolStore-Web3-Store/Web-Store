@@ -509,6 +509,7 @@ export const storeApi = {
       sales: number;
       revenue: string;
       status: "active" | "draft" | "inactive";
+      images: string[];
       createdAt: string;
     }>(`/stores/${storeId}/products`, {
       method: "POST",
@@ -540,6 +541,7 @@ export const storeApi = {
       category: string | null;
       stock: number | "unlimited";
       status: "active" | "draft" | "inactive";
+      images: string[];
       updatedAt: string;
     }>(`/stores/${storeId}/products/${productId}`, {
       method: "PUT",
@@ -633,7 +635,13 @@ export const storeApi = {
       };
     }>(`/stores/${storeId}/checkout`, {
       method: "POST",
-      data: checkoutData,
+      data: {
+        productId: checkoutData.productId,
+        quantity: checkoutData.quantity || 1,
+        customerWallet: checkoutData.customerWallet,
+        customerEmail: checkoutData.customerEmail,
+        currency: checkoutData.currency || "SOL",
+      },
     });
   },
 
@@ -655,7 +663,10 @@ export const storeApi = {
       message?: string;
     }>(`/stores/${storeId}/checkout/verify`, {
       method: "POST",
-      data: verificationData,
+      data: {
+        orderId: verificationData.orderId,
+        signature: verificationData.signature,
+      },
     });
   },
 
@@ -663,12 +674,12 @@ export const storeApi = {
     return apiRequest<{
       orderId: string;
       orderNumber: string;
-      status: string;
+      status: "pending" | "completed" | "failed";
       amount: string;
       currency: string;
       paymentURL: string;
       expiresAt: string;
-      transactionSignature?: string;
+      transactionSignature?: string | null;
       items: Array<{
         product: {
           id: string;
@@ -721,6 +732,39 @@ export const uploadApi = {
       headers: {
         "Content-Type": "multipart/form-data",
       },
+    });
+  },
+
+  async uploadProductImages(files: File[]) {
+    const formData = new FormData();
+    
+    // Append each file to the FormData with the key 'images'
+    files.forEach((file) => {
+      formData.append("images", file);
+    });
+
+    return apiRequest<{
+      files: Array<{
+        url: string;
+        key: string;
+        name: string;
+        size: number;
+      }>;
+      count: number;
+    }>("/upload/product-images", {
+      method: "POST",
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  },
+
+  async deleteFile(fileKey: string) {
+    return apiRequest<{
+      message: string;
+    }>(`/upload/file/${fileKey}`, {
+      method: "DELETE",
     });
   },
 };

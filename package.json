@@ -13,12 +13,15 @@
     "@solana/wallet-adapter-phantom": "^0.9.24",
     "@solana/wallet-adapter-react": "^0.15.39",
     "@solana/web3.js": "^1.95.4",
+    "@types/qrcode": "^1.5.5",
     "axios": "^1.12.2",
     "bs58": "^6.0.0",
     "lucide-react": "^0.544.0",
     "next": "15.5.4",
+    "qrcode": "^1.5.4",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "react-icons": "^5.5.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
