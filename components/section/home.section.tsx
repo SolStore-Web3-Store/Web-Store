@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useWallet } from '@/hooks/useWallet';
 import { WalletService } from '@/lib/wallet';
 import { WalletConnectDialog } from '@/components/wallet/wallet-connect-dialog';
+import { BsGithub } from 'react-icons/bs';
 
 export default function WebPlatform() {
   const { isConnected, walletAddress, disconnectWallet, isConnecting } = useWallet();
@@ -72,6 +73,7 @@ export default function WebPlatform() {
 
           {/* Wallet & CTA Section */}
           <div className="flex items-center gap-4">
+            <a href='https://github.com/SolStore-Web3-Store'><BsGithub fill='black'/></a>
             {isConnected && walletAddress ? (
               <div className="flex items-center gap-3">
                 {/* Wallet Address Display */}
