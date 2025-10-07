@@ -737,7 +737,7 @@ export const uploadApi = {
 
   async uploadProductImages(files: File[]) {
     const formData = new FormData();
-    
+
     // Append each file to the FormData with the key 'images'
     files.forEach((file) => {
       formData.append("images", file);

@@ -278,6 +278,16 @@ function StoreSettingsContent() {
     }
   };
 
+  // Check if all required General Information fields are filled
+  const isGeneralInfoComplete = (): boolean => {
+    return !!(
+      settings.storeName.trim() &&
+      settings.storeDescription.trim() &&
+      settings.storeLogo &&
+      settings.storeBanner
+    );
+  };
+
   const tabs: Tab[] = [
     { id: 'general', label: 'General', icon: Store },
     { id: 'appearance', label: 'Appearance', icon: Palette },
@@ -301,7 +311,9 @@ function StoreSettingsContent() {
               <p className="text-xs text-gray-600 mt-1">Manage your store configuration and preferences</p>
             </div>
             <div className="flex items-center gap-3">
+            {isGeneralInfoComplete() && <p className='text-xs'> Pls fill all fields</p>}
               {/* Save Status */}
+
               {saveStatus.type && (
                 <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs ${saveStatus.type === 'success'
                   ? 'bg-green-50 text-green-700 border border-green-200'
@@ -312,22 +324,26 @@ function StoreSettingsContent() {
                   {saveStatus.type === 'success' && <CheckCircle className="w-4 h-4" />}
                   {saveStatus.type === 'error' && <AlertCircle className="w-4 h-4" />}
                   {saveStatus.type === 'loading' && <Loader2 className="w-4 h-4 animate-spin" />}
+               
                   {saveStatus.message}
                 </div>
               )}
 
-              <button
-                onClick={handleSave}
-                disabled={saveStatus.type === 'loading' || !isConnected}
-                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {saveStatus.type === 'loading' ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Save className="w-4 h-4" />
-                )}
-                Save Changes
-              </button>
+              {/* Only show save button when General Information is complete or not on general tab */}
+              {(activeTab !== 'general' || isGeneralInfoComplete()) && (
+                <button
+                  onClick={handleSave}
+                  disabled={saveStatus.type === 'loading' || !isConnected}
+                  className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {saveStatus.type === 'loading' ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Save className="w-4 h-4" />
+                  )}
+                  Save Changes
+                </button>
+              )}
             </div>
           </div>
         </header>

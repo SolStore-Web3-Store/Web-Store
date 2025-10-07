@@ -26,35 +26,39 @@ export default function ExplorePage() {
   const stores = [
     {
       id: 1,
-      name: "Digital Art Studio",
-      description: "Premium NFT collections and digital artwork",
+      name: "Prudence Stores",
+      description: "We offer affordable smartphones and at an affordable rate",
       image: "/solstoreDash.jpg",
       category: "Art & Design",
       rating: 4.8,
-      products: 24
+      products: 24,
+      url: '/prudence'
     },
     {
       id: 2,
-      name: "Web3 Tools",
+      name: "Peter Stores",
       description: "Essential tools and resources for Web3 developers",
       image: "/solstoreDash.jpg",
       category: "Development",
       rating: 4.9,
-      products: 18
+      products: 18,
+      url: '/my-store'
+
     },
     {
       id: 3,
-      name: "Crypto Courses",
-      description: "Learn blockchain and cryptocurrency fundamentals",
+      name: "BYCrypto Stores",
+      description: "Buy Crypto Courses",
       image: "/solstoreDash.jpg",
       category: "Education",
       rating: 4.7,
-      products: 12
+      products: 12,
+      url: '/bycrypto'
     }
   ];
 
   return (
-    <div className="h-full w-full bg-gray-50 text-black"  suppressHydrationWarning>
+    <div className="h-full w-full bg-gray-50 text-black" suppressHydrationWarning>
       {/* Top Banner */}
       <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-5 px-4 text-center text-xs font-medium">
         <span className="inline-flex items-center gap-2">
@@ -174,13 +178,8 @@ export default function ExplorePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {stores.map((store) => (
             <div key={store.id} className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-video relative">
-                <Image
-                  src={store.image}
-                  alt={store.name}
-                  fill
-                  className="object-cover"
-                />
+              <div className="aspect-video relative bg-gray-800">
+
               </div>
               <div className="p-6">
                 <div className="flex items-start justify-between mb-2">
@@ -197,9 +196,9 @@ export default function ExplorePage() {
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-500">{store.products} products</span>
-                  <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+                  <a href={store.url} className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors">
                     Visit Store
-                  </button>
+                  </a>
                 </div>
               </div>
             </div>
